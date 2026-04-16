@@ -3,11 +3,11 @@ package service
 import (
 	"errors"
 
-	"github.com/mhsanaei/3x-ui/v2/database"
-	"github.com/mhsanaei/3x-ui/v2/database/model"
-	"github.com/mhsanaei/3x-ui/v2/logger"
-	"github.com/mhsanaei/3x-ui/v2/util/crypto"
-	ldaputil "github.com/mhsanaei/3x-ui/v2/util/ldap"
+	"github.com/vietnamvpn/3x-ui/v2/database"
+	"github.com/vietnamvpn/3x-ui/v2/database/model"
+	"github.com/vietnamvpn/3x-ui/v2/logger"
+	"github.com/vietnamvpn/3x-ui/v2/util/crypto"
+	ldaputil "github.com/vietnamvpn/3x-ui/v2/util/ldap"
 	"github.com/xlzd/gotp"
 	"gorm.io/gorm"
 )

@@ -6,8 +6,8 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/mhsanaei/3x-ui/v2/logger"
-	"github.com/mhsanaei/3x-ui/v2/xray"
+	"github.com/vietnamvpn/3x-ui/v2/logger"
+	"github.com/vietnamvpn/3x-ui/v2/xray"
 
 	"go.uber.org/atomic"
 )

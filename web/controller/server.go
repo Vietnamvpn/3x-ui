@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/mhsanaei/3x-ui/v2/web/global"
-	"github.com/mhsanaei/3x-ui/v2/web/service"
-	"github.com/mhsanaei/3x-ui/v2/web/websocket"
+	"github.com/vietnamvpn/3x-ui/v2/web/global"
+	"github.com/vietnamvpn/3x-ui/v2/web/service"
+	"github.com/vietnamvpn/3x-ui/v2/web/websocket"
 
 	"github.com/gin-gonic/gin"
 )

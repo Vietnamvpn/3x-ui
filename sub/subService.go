@@ -11,13 +11,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/goccy/go-json"
 
-	"github.com/mhsanaei/3x-ui/v2/database"
-	"github.com/mhsanaei/3x-ui/v2/database/model"
-	"github.com/mhsanaei/3x-ui/v2/logger"
-	"github.com/mhsanaei/3x-ui/v2/util/common"
-	"github.com/mhsanaei/3x-ui/v2/util/random"
-	"github.com/mhsanaei/3x-ui/v2/web/service"
-	"github.com/mhsanaei/3x-ui/v2/xray"
+	"github.com/vietnamvpn/3x-ui/v2/database"
+	"github.com/vietnamvpn/3x-ui/v2/database/model"
+	"github.com/vietnamvpn/3x-ui/v2/logger"
+	"github.com/vietnamvpn/3x-ui/v2/util/common"
+	"github.com/vietnamvpn/3x-ui/v2/util/random"
+	"github.com/vietnamvpn/3x-ui/v2/web/service"
+	"github.com/vietnamvpn/3x-ui/v2/xray"
 )
 
 // SubService provides business logic for generating subscription links and managing subscription data.
