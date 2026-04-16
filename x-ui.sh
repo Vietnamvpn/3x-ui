@@ -50,10 +50,10 @@ is_domain() {
     [[ "$1" =~ ^([A-Za-z0-9](-*[A-Za-z0-9])*\.)+(xn--[a-z0-9]{2,}|[A-Za-z]{2,})$ ]] && return 0 || return 1
 }
 
-# check root
-[[ $EUID -ne 0 ]] && LOGE "ERROR: You must be root to run this script! \n" && exit 1
+# kiểm tra quyền root
+[[ $EUID -ne 0 ]] && LOGE "LỖI: Bạn phải có quyền root để chạy script này! \n" && exit 1
 
-# Check OS and set release variable
+# Kiểm tra hệ điều hành và đặt biến release
 if [[ -f /etc/os-release ]]; then
     source /etc/os-release
     release=$ID
@@ -61,10 +61,10 @@ elif [[ -f /usr/lib/os-release ]]; then
     source /usr/lib/os-release
     release=$ID
 else
-    echo "Failed to check the system OS, please contact the author!" >&2
+    echo "Không thể kiểm tra hệ điều hành, vui lòng liên hệ tác giả!" >&2
     exit 1
 fi
-echo "The OS release is: $release"
+echo "Hệ điều hành hiện tại là: $release"
 
 os_version=""
 os_version=$(grep "^VERSION_ID" /etc/os-release | cut -d '=' -f2 | tr -d '"' | tr -d '.')
@@ -94,7 +94,7 @@ confirm() {
 }
 
 confirm_restart() {
-    confirm "Restart the panel, Attention: Restarting the panel will also restart xray" "y"
+    confirm "Khởi động lại panel, Chú ý: Khởi động lại panel cũng sẽ khởi động lại xray" "y"
     if [[ $? == 0 ]]; then
         restart
     else
@@ -103,7 +103,7 @@ confirm_restart() {
 }
 
 before_show_menu() {
-    echo && echo -n -e "${yellow}Press enter to return to the main menu: ${plain}" && read -r temp
+    echo && echo -n -e "${yellow}Nhấn Enter để quay lại menu chính: ${plain}" && read -r temp
     show_menu
 }
 
@@ -119,9 +119,9 @@ install() {
 }
 
 update() {
-    confirm "This function will update all x-ui components to the latest version, and the data will not be lost. Do you want to continue?" "y"
+    confirm "Chức năng này sẽ cập nhật tất cả các thành phần x-ui lên phiên bản mới nhất, dữ liệu của bạn sẽ KHÔNG bị mất. Bạn có muốn tiếp tục không?" "y"
     if [[ $? != 0 ]]; then
-        LOGE "Cancelled"
+        LOGE "Đã hủy cập nhật"
         if [[ $# == 0 ]]; then
             before_show_menu
         fi
@@ -129,16 +129,16 @@ update() {
     fi
     bash <(curl -Ls https://raw.githubusercontent.com/vietnamvpn/3x-ui/main/update.sh)
     if [[ $? == 0 ]]; then
-        LOGI "Update is complete, Panel has automatically restarted "
+        LOGI "Cập nhật hoàn tất, Panel đã tự động khởi động lại"
         before_show_menu
     fi
 }
 
 update_menu() {
-    echo -e "${yellow}Updating Menu${plain}"
-    confirm "This function will update the menu to the latest changes." "y"
+    echo -e "${yellow}Đang cập nhật Menu...${plain}"
+    confirm "Chức năng này sẽ tải về bản dịch Menu mới nhất. Bạn có muốn tiếp tục?" "y"
     if [[ $? != 0 ]]; then
-        LOGE "Cancelled"
+        LOGE "Đã hủy cập nhật Menu"
         if [[ $# == 0 ]]; then
             before_show_menu
         fi
@@ -150,37 +150,37 @@ update_menu() {
     chmod +x /usr/bin/x-ui
 
     if [[ $? == 0 ]]; then
-        echo -e "${green}Update successful. The panel has automatically restarted.${plain}"
+        echo -e "${green}Cập nhật Menu thành công. Panel đã tự động khởi động lại.${plain}"
         exit 0
     else
-        echo -e "${red}Failed to update the menu.${plain}"
+        echo -e "${red}Cập nhật Menu thất bại. Vui lòng kiểm tra lại mạng hoặc link GitHub.${plain}"
         return 1
     fi
 }
 
 legacy_version() {
-    echo -n "Enter the panel version (like 2.4.0):"
+    echo -n "Nhập phiên bản panel (ví dụ: 2.4.0): "
     read -r tag_version
 
     if [ -z "$tag_version" ]; then
-        echo "Panel version cannot be empty. Exiting."
+        echo "Phiên bản panel không được để trống. Đang thoát."
         exit 1
     fi
-    # Use the entered panel version in the download link
+    # Sử dụng phiên bản panel đã nhập vào liên kết tải xuống
     install_command="bash <(curl -Ls "https://raw.githubusercontent.com/vietnamvpn/3x-ui/v$tag_version/install.sh") v$tag_version"
 
-    echo "Downloading and installing panel version $tag_version..."
+    echo "Đang tải xuống và cài đặt phiên bản panel $tag_version..."
     eval $install_command
 }
 
-# Function to handle the deletion of the script file
+# Hàm xử lý việc tự xóa file script
 delete_script() {
-    rm "$0" # Remove the script file itself
+    rm "$0" # Tự xóa chính file script này
     exit 1
 }
 
 uninstall() {
-    confirm "Are you sure you want to uninstall the panel? xray will also uninstalled!" "n"
+    confirm "Bạn có chắc chắn muốn gỡ cài đặt panel không? xray cũng sẽ bị gỡ cài đặt theo!" "n"
     if [[ $? != 0 ]]; then
         if [[ $# == 0 ]]; then
             show_menu
@@ -204,17 +204,17 @@ uninstall() {
     rm ${xui_folder}/ -rf
 
     echo ""
-    echo -e "Uninstalled Successfully.\n"
-    echo "If you need to install this panel again, you can use below command:"
+    echo -e "Gỡ cài đặt thành công.\n"
+    echo "Nếu bạn cần cài đặt lại panel này, bạn có thể sử dụng lệnh dưới đây:"
     echo -e "${green}bash <(curl -Ls https://raw.githubusercontent.com/vietnamvpn/3x-ui/master/install.sh)${plain}"
     echo ""
-    # Trap the SIGTERM signal
+    # Bẫy tín hiệu SIGTERM
     trap delete_script SIGTERM
     delete_script
 }
 
 reset_user() {
-    confirm "Are you sure to reset the username and password of the panel?" "n"
+    confirm "Bạn có chắc chắn muốn đặt lại tên người dùng và mật khẩu của panel không?" "n"
     if [[ $? != 0 ]]; then
         if [[ $# == 0 ]]; then
             show_menu
@@ -222,22 +222,22 @@ reset_user() {
         return 0
     fi
     
-    read -rp "Please set the login username [default is a random username]: " config_account
+    read -rp "Vui lòng đặt tên đăng nhập [mặc định là tên ngẫu nhiên]: " config_account
     [[ -z $config_account ]] && config_account=$(gen_random_string 10)
-    read -rp "Please set the login password [default is a random password]: " config_password
+    read -rp "Vui lòng đặt mật khẩu đăng nhập [mặc định là mật khẩu ngẫu nhiên]: " config_password
     [[ -z $config_password ]] && config_password=$(gen_random_string 18)
 
-    read -rp "Do you want to disable currently configured two-factor authentication? (y/n): " twoFactorConfirm
+    read -rp "Bạn có muốn tắt xác thực hai yếu tố (2FA) đang được cấu hình không? (y/n): " twoFactorConfirm
     if [[ $twoFactorConfirm != "y" && $twoFactorConfirm != "Y" ]]; then
         ${xui_folder}/x-ui setting -username "${config_account}" -password "${config_password}" -resetTwoFactor false >/dev/null 2>&1
     else
         ${xui_folder}/x-ui setting -username "${config_account}" -password "${config_password}" -resetTwoFactor true >/dev/null 2>&1
-        echo -e "Two factor authentication has been disabled."
+        echo -e "Xác thực hai yếu tố đã bị tắt."
     fi
     
-    echo -e "Panel login username has been reset to: ${green} ${config_account} ${plain}"
-    echo -e "Panel login password has been reset to: ${green} ${config_password} ${plain}"
-    echo -e "${green} Please use the new login username and password to access the X-UI panel. Also remember them! ${plain}"
+    echo -e "Tên đăng nhập panel đã được đặt lại thành: ${green} ${config_account} ${plain}"
+    echo -e "Mật khẩu đăng nhập panel đã được đặt lại thành: ${green} ${config_password} ${plain}"
+    echo -e "${green} Vui lòng sử dụng tên đăng nhập và mật khẩu mới để truy cập panel X-UI. Và nhớ lưu lại nhé! ${plain}"
     confirm_restart
 }
 
@@ -249,11 +249,11 @@ gen_random_string() {
 }
 
 reset_webbasepath() {
-    echo -e "${yellow}Resetting Web Base Path${plain}"
+    echo -e "${yellow}Đang đặt lại Web Base Path (Đường dẫn gốc)${plain}"
 
-    read -rp "Are you sure you want to reset the web base path? (y/n): " confirm
+    read -rp "Bạn có chắc chắn muốn đặt lại đường dẫn gốc (web base path) không? (y/n): " confirm
     if [[ $confirm != "y" && $confirm != "Y" ]]; then
-        echo -e "${yellow}Operation canceled.${plain}"
+        echo -e "${yellow}Đã hủy thao tác.${plain}"
         return
     fi
 
@@ -262,13 +262,13 @@ reset_webbasepath() {
     # Apply the new web base path setting
     ${xui_folder}/x-ui setting -webBasePath "${config_webBasePath}" >/dev/null 2>&1
 
-    echo -e "Web base path has been reset to: ${green}${config_webBasePath}${plain}"
-    echo -e "${green}Please use the new web base path to access the panel.${plain}"
+    echo -e "Đường dẫn gốc (web base path) đã được đặt lại thành: ${green}${config_webBasePath}${plain}"
+    echo -e "${green}Vui lòng sử dụng đường dẫn gốc mới để truy cập panel.${plain}"
     restart
 }
 
 reset_config() {
-    confirm "Are you sure you want to reset all panel settings, Account data will not be lost, Username and password will not change" "n"
+    confirm "Bạn có chắc chắn muốn đặt lại tất cả cài đặt panel không? Dữ liệu tài khoản sẽ KHÔNG bị mất, Tên người dùng và mật khẩu sẽ KHÔNG thay đổi" "n"
     if [[ $? != 0 ]]; then
         if [[ $# == 0 ]]; then
             show_menu
@@ -276,14 +276,14 @@ reset_config() {
         return 0
     fi
     ${xui_folder}/x-ui setting -reset
-    echo -e "All panel settings have been reset to default."
+    echo -e "Tất cả cài đặt panel đã được đặt lại về mặc định."
     restart
 }
 
 check_config() {
     local info=$(${xui_folder}/x-ui setting -show true)
     if [[ $? != 0 ]]; then
-        LOGE "get current settings error, please check logs"
+        LOGE "Lỗi khi lấy cài đặt hiện tại, vui lòng kiểm tra log (nhật ký)"
         show_menu
         return
     fi
@@ -301,42 +301,42 @@ check_config() {
         local domain=$(basename "$(dirname "$existing_cert")")
 
         if [[ "$domain" =~ ^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
-            echo -e "${green}Access URL: https://${domain}:${existing_port}${existing_webBasePath}${plain}"
+            echo -e "${green}Đường dẫn truy cập: https://${domain}:${existing_port}${existing_webBasePath}${plain}"
         else
-            echo -e "${green}Access URL: https://${server_ip}:${existing_port}${existing_webBasePath}${plain}"
+            echo -e "${green}Đường dẫn truy cập: https://${server_ip}:${existing_port}${existing_webBasePath}${plain}"
         fi
     else
-        echo -e "${red}⚠ WARNING: No SSL certificate configured!${plain}"
-        echo -e "${yellow}You can get a Let's Encrypt certificate for your IP address (valid ~6 days, auto-renews).${plain}"
-        read -rp "Generate SSL certificate for IP now? [y/N]: " gen_ssl
+        echo -e "${red}⚠ CẢNH BÁO: Chưa cấu hình chứng chỉ SSL!${plain}"
+        echo -e "${yellow}Bạn có thể lấy chứng chỉ Let's Encrypt cho địa chỉ IP của mình (có giá trị ~6 ngày, tự động gia hạn).${plain}"
+        read -rp "Tạo chứng chỉ SSL cho IP ngay bây giờ? [y/N]: " gen_ssl
         if [[ "$gen_ssl" == "y" || "$gen_ssl" == "Y" ]]; then
             stop >/dev/null 2>&1
             ssl_cert_issue_for_ip
             if [[ $? -eq 0 ]]; then
-                echo -e "${green}Access URL: https://${server_ip}:${existing_port}${existing_webBasePath}${plain}"
-                # ssl_cert_issue_for_ip already restarts the panel, but ensure it's running
+                echo -e "${green}Đường dẫn truy cập: https://${server_ip}:${existing_port}${existing_webBasePath}${plain}"
+                # ssl_cert_issue_for_ip đã khởi động lại panel, nhưng cứ đảm bảo nó đang chạy
                 start >/dev/null 2>&1
             else
-                LOGE "IP certificate setup failed."
-                echo -e "${yellow}You can try again via option 19 (SSL Certificate Management).${plain}"
+                LOGE "Thiết lập chứng chỉ IP thất bại."
+                echo -e "${yellow}Bạn có thể thử lại qua tùy chọn 19 (Quản lý chứng chỉ SSL).${plain}"
                 start >/dev/null 2>&1
             fi
         else
-            echo -e "${yellow}Access URL: http://${server_ip}:${existing_port}${existing_webBasePath}${plain}"
-            echo -e "${yellow}For security, please configure SSL certificate using option 19 (SSL Certificate Management)${plain}"
+            echo -e "${yellow}Đường dẫn truy cập: http://${server_ip}:${existing_port}${existing_webBasePath}${plain}"
+            echo -e "${yellow}Để bảo mật, vui lòng cấu hình chứng chỉ SSL bằng tùy chọn 19 (Quản lý chứng chỉ SSL)${plain}"
         fi
     fi
 }
 
 set_port() {
-    echo -n "Enter port number[1-65535]: "
+    echo -n "Nhập số cổng (Port) [1-65535]: "
     read -r port
     if [[ -z "${port}" ]]; then
-        LOGD "Cancelled"
+        LOGD "Đã hủy"
         before_show_menu
     else
         ${xui_folder}/x-ui setting -port ${port}
-        echo -e "The port is set, Please restart the panel now, and use the new port ${green}${port}${plain} to access web panel"
+        echo -e "Cổng đã được thiết lập. Vui lòng khởi động lại panel ngay bây giờ và sử dụng cổng mới ${green}${port}${plain} để truy cập web panel."
         confirm_restart
     fi
 }
@@ -345,7 +345,7 @@ start() {
     check_status
     if [[ $? == 0 ]]; then
         echo ""
-        LOGI "Panel is running, No need to start again, If you need to restart, please select restart"
+        LOGI "Panel đang chạy, không cần khởi động lại. Nếu bạn muốn khởi động lại, vui lòng chọn mục Khởi động lại."
     else
         if [[ $release == "alpine" ]]; then
             rc-service x-ui start
@@ -355,9 +355,9 @@ start() {
         sleep 2
         check_status
         if [[ $? == 0 ]]; then
-            LOGI "x-ui Started Successfully"
+            LOGI "Đã khởi động x-ui thành công"
         else
-            LOGE "panel Failed to start, Probably because it takes longer than two seconds to start, Please check the log information later"
+            LOGE "Khởi động panel thất bại. Có thể do thời gian khởi động lâu hơn 2 giây. Vui lòng kiểm tra log (nhật ký) sau!"
         fi
     fi
 
@@ -370,7 +370,7 @@ stop() {
     check_status
     if [[ $? == 1 ]]; then
         echo ""
-        LOGI "Panel stopped, No need to stop again!"
+        LOGI "Panel đã dừng, không cần dừng lại nữa!"
     else
         if [[ $release == "alpine" ]]; then
             rc-service x-ui stop
@@ -380,9 +380,9 @@ stop() {
         sleep 2
         check_status
         if [[ $? == 1 ]]; then
-            LOGI "x-ui and xray stopped successfully"
+            LOGI "Đã dừng x-ui và xray thành công"
         else
-            LOGE "Panel stop failed, Probably because the stop time exceeds two seconds, Please check the log information later"
+            LOGE "Dừng panel thất bại. Có thể do thời gian dừng lâu hơn 2 giây. Vui lòng kiểm tra log (nhật ký) sau!"
         fi
     fi
 
@@ -400,9 +400,9 @@ restart() {
     sleep 2
     check_status
     if [[ $? == 0 ]]; then
-        LOGI "x-ui and xray Restarted successfully"
+        LOGI "Đã khởi động lại x-ui và xray thành công"
     else
-        LOGE "Panel restart failed, Probably because it takes longer than two seconds to start, Please check the log information later"
+        LOGE "Khởi động lại panel thất bại. Có thể do thời gian khởi động lâu hơn 2 giây. Vui lòng kiểm tra log (nhật ký) sau!"
     fi
     if [[ $# == 0 ]]; then
         before_show_menu
@@ -411,7 +411,7 @@ restart() {
 
 restart_xray() {
     systemctl reload x-ui
-    LOGI "xray-core Restart signal sent successfully, Please check the log information to confirm whether xray restarted successfully"
+    LOGI "Đã gửi tín hiệu khởi động lại xray-core thành công, vui lòng kiểm tra log để xác nhận xray đã khởi động lại hoàn tất"
     sleep 2
     show_xray_status
     if [[ $# == 0 ]]; then
@@ -437,9 +437,9 @@ enable() {
         systemctl enable x-ui
     fi
     if [[ $? == 0 ]]; then
-        LOGI "x-ui Set to boot automatically on startup successfully"
+        LOGI "Đã thiết lập x-ui tự động chạy khi khởi động VPS thành công"
     else
-        LOGE "x-ui Failed to set Autostart"
+        LOGE "Thiết lập tự động chạy (Autostart) thất bại"
     fi
 
     if [[ $# == 0 ]]; then
@@ -454,9 +454,9 @@ disable() {
         systemctl disable x-ui
     fi
     if [[ $? == 0 ]]; then
-        LOGI "x-ui Autostart Cancelled successfully"
+        LOGI "Đã hủy tự động chạy x-ui khi khởi động VPS thành công"
     else
-        LOGE "x-ui Failed to cancel autostart"
+        LOGE "Hủy tự động chạy thất bại"
     fi
 
     if [[ $# == 0 ]]; then
@@ -466,9 +466,9 @@ disable() {
 
 show_log() {
     if [[ $release == "alpine" ]]; then
-        echo -e "${green}\t1.${plain} Debug Log"
-        echo -e "${green}\t0.${plain} Back to Main Menu"
-        read -rp "Choose an option: " choice
+        echo -e "${green}\t1.${plain} Nhật ký Debug"
+        echo -e "${green}\t0.${plain} Quay lại Menu chính"
+        read -rp "Vui lòng chọn một mục: " choice
 
         case "$choice" in
         0)
@@ -481,15 +481,15 @@ show_log() {
             fi
             ;;
         *)
-            echo -e "${red}Invalid option. Please select a valid number.${plain}\n"
+            echo -e "${red}Lựa chọn không hợp lệ. Vui lòng nhập đúng số tương ứng.${plain}\n"
             show_log
             ;;
         esac
     else
-        echo -e "${green}\t1.${plain} Debug Log"
-        echo -e "${green}\t2.${plain} Clear All logs"
-        echo -e "${green}\t0.${plain} Back to Main Menu"
-        read -rp "Choose an option: " choice
+        echo -e "${green}\t1.${plain} Nhật ký Debug"
+        echo -e "${green}\t2.${plain} Xóa tất cả nhật ký"
+        echo -e "${green}\t0.${plain} Quay lại Menu chính"
+        read -rp "Vui lòng chọn một mục: " choice
 
         case "$choice" in
         0)
@@ -504,11 +504,11 @@ show_log() {
         2)
             sudo journalctl --rotate
             sudo journalctl --vacuum-time=1s
-            echo "All Logs cleared."
+            echo "Đã xóa toàn bộ nhật ký."
             restart
             ;;
         *)
-            echo -e "${red}Invalid option. Please select a valid number.${plain}\n"
+            echo -e "${red}Lựa chọn không hợp lệ. Vui lòng nhập đúng số tương ứng.${plain}\n"
             show_log
             ;;
         esac
@@ -516,10 +516,10 @@ show_log() {
 }
 
 bbr_menu() {
-    echo -e "${green}\t1.${plain} Enable BBR"
-    echo -e "${green}\t2.${plain} Disable BBR"
-    echo -e "${green}\t0.${plain} Back to Main Menu"
-    read -rp "Choose an option: " choice
+    echo -e "${green}\t1.${plain} Bật BBR (Tăng tốc mạng)"
+    echo -e "${green}\t2.${plain} Tắt BBR"
+    echo -e "${green}\t0.${plain} Quay lại Menu chính"
+    read -rp "Vui lòng chọn một mục: " choice
     case "$choice" in
     0)
         show_menu
@@ -533,7 +533,7 @@ bbr_menu() {
         bbr_menu
         ;;
     *)
-        echo -e "${red}Invalid option. Please select a valid number.${plain}\n"
+        echo -e "${red}Lựa chọn không hợp lệ. Vui lòng nhập đúng số tương ứng.${plain}\n"
         bbr_menu
         ;;
     esac
@@ -542,7 +542,7 @@ bbr_menu() {
 disable_bbr() {
 
     if [[ $(sysctl -n net.ipv4.tcp_congestion_control) != "bbr" ]] || [[ ! $(sysctl -n net.core.default_qdisc) =~ ^(fq|cake)$ ]]; then
-        echo -e "${yellow}BBR is not currently enabled.${plain}"
+        echo -e "${yellow}BBR hiện chưa được bật.${plain}"
         before_show_menu
     fi
 
@@ -553,7 +553,7 @@ disable_bbr() {
         rm /etc/sysctl.d/99-bbr-x-ui.conf
         sysctl --system
     else
-        # Replace BBR with CUBIC configurations
+        # Thay thế cấu hình BBR bằng CUBIC
         if [ -f "/etc/sysctl.conf" ]; then
             sed -i 's/net.core.default_qdisc=fq/net.core.default_qdisc=pfifo_fast/' /etc/sysctl.conf
             sed -i 's/net.ipv4.tcp_congestion_control=bbr/net.ipv4.tcp_congestion_control=cubic/' /etc/sysctl.conf
@@ -562,19 +562,19 @@ disable_bbr() {
     fi
 
     if [[ $(sysctl -n net.ipv4.tcp_congestion_control) != "bbr" ]]; then
-        echo -e "${green}BBR has been replaced with CUBIC successfully.${plain}"
+        echo -e "${green}Đã thay thế BBR bằng CUBIC thành công.${plain}"
     else
-        echo -e "${red}Failed to replace BBR with CUBIC. Please check your system configuration.${plain}"
+        echo -e "${red}Thay thế BBR bằng CUBIC thất bại. Vui lòng kiểm tra lại cấu hình hệ thống.${plain}"
     fi
 }
 
 enable_bbr() {
     if [[ $(sysctl -n net.ipv4.tcp_congestion_control) == "bbr" ]] && [[ $(sysctl -n net.core.default_qdisc) =~ ^(fq|cake)$ ]]; then
-        echo -e "${green}BBR is already enabled!${plain}"
+        echo -e "${green}BBR đã được bật sẵn rồi!${plain}"
         before_show_menu
     fi
 
-    # Enable BBR
+    # Kích hoạt BBR
     if [ -d "/etc/sysctl.d/" ]; then
         {
             echo "#$(sysctl -n net.core.default_qdisc):$(sysctl -n net.ipv4.tcp_congestion_control)"
@@ -582,7 +582,7 @@ enable_bbr() {
             echo "net.ipv4.tcp_congestion_control = bbr"
         } > "/etc/sysctl.d/99-bbr-x-ui.conf"
         if [ -f "/etc/sysctl.conf" ]; then
-            # Backup old settings from sysctl.conf, if any
+            # Sao lưu cài đặt cũ từ sysctl.conf nếu có
             sed -i 's/^net.core.default_qdisc/# &/'          /etc/sysctl.conf
             sed -i 's/^net.ipv4.tcp_congestion_control/# &/' /etc/sysctl.conf
         fi
@@ -595,28 +595,29 @@ enable_bbr() {
         sysctl -p
     fi
 
-    # Verify that BBR is enabled
+    # Kiểm tra xem BBR đã thực sự được bật chưa
     if [[ $(sysctl -n net.ipv4.tcp_congestion_control) == "bbr" ]]; then
-        echo -e "${green}BBR has been enabled successfully.${plain}"
+        echo -e "${green}Đã kích hoạt BBR thành công.${plain}"
     else
-        echo -e "${red}Failed to enable BBR. Please check your system configuration.${plain}"
+        echo -e "${red}Kích hoạt BBR thất bại. Vui lòng kiểm tra lại cấu hình hệ thống của sếp.${plain}"
     fi
 }
 
 update_shell() {
+    # Tải file x-ui.sh mới nhất từ kho của sếp
     curl -fLRo /usr/bin/x-ui -z /usr/bin/x-ui https://github.com/vietnamvpn/3x-ui/raw/main/x-ui.sh
     if [[ $? != 0 ]]; then
         echo ""
-        LOGE "Failed to download script, Please check whether the machine can connect Github"
+        LOGE "Tải script thất bại, vui lòng kiểm tra xem VPS có kết nối được tới Github không sếp ơi!"
         before_show_menu
     else
         chmod +x /usr/bin/x-ui
-        LOGI "Upgrade script succeeded, Please rerun the script"
+        LOGI "Nâng cấp script thành công, sếp vui lòng chạy lại lệnh x-ui để hưởng thụ nhé!"
         before_show_menu
     fi
 }
 
-# 0: running, 1: not running, 2: not installed
+# 0: đang chạy, 1: không chạy, 2: chưa cài đặt
 check_status() {
     if [[ $release == "alpine" ]]; then
         if [[ ! -f /etc/init.d/x-ui ]]; then
@@ -661,7 +662,7 @@ check_uninstall() {
     check_status
     if [[ $? != 2 ]]; then
         echo ""
-        LOGE "Panel installed, Please do not reinstall"
+        LOGE "Panel đã được cài đặt, vui lòng không cài đặt lại sếp ơi!"
         if [[ $# == 0 ]]; then
             before_show_menu
         fi
@@ -675,7 +676,7 @@ check_install() {
     check_status
     if [[ $? == 2 ]]; then
         echo ""
-        LOGE "Please install the panel first"
+        LOGE "Vui lòng cài đặt panel trước khi thực hiện thao tác này."
         if [[ $# == 0 ]]; then
             before_show_menu
         fi
@@ -689,15 +690,15 @@ show_status() {
     check_status
     case $? in
     0)
-        echo -e "Panel state: ${green}Running${plain}"
+        echo -e "Trạng thái Panel: ${green}Đang chạy${plain}"
         show_enable_status
         ;;
     1)
-        echo -e "Panel state: ${yellow}Not Running${plain}"
+        echo -e "Trạng thái Panel: ${yellow}Không chạy${plain}"
         show_enable_status
         ;;
     2)
-        echo -e "Panel state: ${red}Not Installed${plain}"
+        echo -e "Trạng thái Panel: ${red}Chưa cài đặt${plain}"
         ;;
     esac
     show_xray_status
@@ -706,9 +707,9 @@ show_status() {
 show_enable_status() {
     check_enabled
     if [[ $? == 0 ]]; then
-        echo -e "Start automatically: ${green}Yes${plain}"
+        echo -e "Tự động chạy khi khởi động: ${green}Có${plain}"
     else
-        echo -e "Start automatically: ${red}No${plain}"
+        echo -e "Tự động chạy khi khởi động: ${red}Không${plain}"
     fi
 }
 
@@ -724,22 +725,22 @@ check_xray_status() {
 show_xray_status() {
     check_xray_status
     if [[ $? == 0 ]]; then
-        echo -e "xray state: ${green}Running${plain}"
+        echo -e "Trạng thái xray: ${green}Đang chạy${plain}"
     else
-        echo -e "xray state: ${red}Not Running${plain}"
+        echo -e "Trạng thái xray: ${red}Không chạy${plain}"
     fi
 }
 
 firewall_menu() {
-    echo -e "${green}\t1.${plain} ${green}Install${plain} Firewall"
-    echo -e "${green}\t2.${plain} Port List [numbered]"
-    echo -e "${green}\t3.${plain} ${green}Open${plain} Ports"
-    echo -e "${green}\t4.${plain} ${red}Delete${plain} Ports from List"
-    echo -e "${green}\t5.${plain} ${green}Enable${plain} Firewall"
-    echo -e "${green}\t6.${plain} ${red}Disable${plain} Firewall"
-    echo -e "${green}\t7.${plain} Firewall Status"
-    echo -e "${green}\t0.${plain} Back to Main Menu"
-    read -rp "Choose an option: " choice
+    echo -e "${green}\t1.${plain} ${green}Cài đặt${plain} Firewall (Tường lửa)"
+    echo -e "${green}\t2.${plain} Danh sách Port [đánh số]"
+    echo -e "${green}\t3.${plain} ${green}Mở${plain} Ports"
+    echo -e "${green}\t4.${plain} ${red}Xóa${plain} Port khỏi danh sách"
+    echo -e "${green}\t5.${plain} ${green}Bật${plain} Firewall"
+    echo -e "${green}\t6.${plain} ${red}Tắt${plain} Firewall"
+    echo -e "${green}\t7.${plain} Trạng thái Firewall"
+    echo -e "${green}\t0.${plain} Quay lại Menu chính"
+    read -rp "Vui lòng chọn một mục: " choice
     case "$choice" in
     0)
         show_menu
@@ -773,7 +774,7 @@ firewall_menu() {
         firewall_menu
         ;;
     *)
-        echo -e "${red}Invalid option. Please select a valid number.${plain}\n"
+        echo -e "${red}Lựa chọn không hợp lệ. Vui lòng nhập đúng số tương ứng.${plain}\n"
         firewall_menu
         ;;
     esac
@@ -781,142 +782,143 @@ firewall_menu() {
 
 install_firewall() {
     if ! command -v ufw &>/dev/null; then
-        echo "ufw firewall is not installed. Installing now..."
+        echo "Firewall UFW chưa được cài đặt. Đang tiến hành cài đặt..."
         apt-get update
         apt-get install -y ufw
     else
-        echo "ufw firewall is already installed"
+        echo "Firewall UFW đã được cài đặt sẵn rồi."
     fi
 
-    # Check if the firewall is inactive
+    # Kiểm tra xem firewall đã hoạt động chưa
     if ufw status | grep -q "Status: active"; then
-        echo "Firewall is already active"
+        echo "Firewall hiện đang hoạt động."
     else
-        echo "Activating firewall..."
-        # Open the necessary ports
+        echo "Đang kích hoạt Firewall..."
+        # Mở các port cần thiết để không bị khóa SSH
         ufw allow ssh
         ufw allow http
         ufw allow https
-        ufw allow 2053/tcp #webPort
-        ufw allow 2096/tcp #subport
+        ufw allow 2053/tcp #webPort mặc định
+        ufw allow 2096/tcp #subport mặc định
 
-        # Enable the firewall
+        # Kích hoạt firewall
         ufw --force enable
+        echo "Firewall đã được kích hoạt và các port cơ bản đã được mở."
     fi
 }
 
 open_ports() {
-    # Prompt the user to enter the ports they want to open
-    read -rp "Enter the ports you want to open (e.g. 80,443,2053 or range 400-500): " ports
+    # Yêu cầu người dùng nhập các cổng muốn mở
+    read -rp "Nhập các cổng sếp muốn mở (vídụ: 80,443,2053 hoặc dải cổng 400-500): " ports
 
-    # Check if the input is valid
+    # Kiểm tra xem đầu vào có hợp lệ không
     if ! [[ $ports =~ ^([0-9]+|[0-9]+-[0-9]+)(,([0-9]+|[0-9]+-[0-9]+))*$ ]]; then
-        echo "Error: Invalid input. Please enter a comma-separated list of ports or a range of ports (e.g. 80,443,2053 or 400-500)." >&2
+        echo -e "${red}Lỗi: Đầu vào không hợp lệ. Vui lòng nhập danh sách cổng cách nhau bằng dấu phẩy hoặc một dải cổng (ví dụ: 80,443,2053 hoặc 400-500).${plain}" >&2
         exit 1
     fi
 
-    # Open the specified ports using ufw
+    # Mở các cổng đã chỉ định bằng ufw
     IFS=',' read -ra PORT_LIST <<<"$ports"
     for port in "${PORT_LIST[@]}"; do
         if [[ $port == *-* ]]; then
-            # Split the range into start and end ports
+            # Chia dải cổng thành cổng bắt đầu và cổng kết thúc
             start_port=$(echo $port | cut -d'-' -f1)
             end_port=$(echo $port | cut -d'-' -f2)
-            # Open the port range
+            # Mở dải cổng cho cả tcp và udp
             ufw allow $start_port:$end_port/tcp
             ufw allow $start_port:$end_port/udp
         else
-            # Open the single port
+            # Mở cổng đơn lẻ
             ufw allow "$port"
         fi
     done
 
-    # Confirm that the ports are opened
-    echo "Opened the specified ports:"
+    # Xác nhận các cổng đã được mở
+    echo "Đã mở các cổng sau:"
     for port in "${PORT_LIST[@]}"; do
         if [[ $port == *-* ]]; then
             start_port=$(echo $port | cut -d'-' -f1)
             end_port=$(echo $port | cut -d'-' -f2)
-            # Check if the port range has been successfully opened
+            # Kiểm tra xem dải cổng đã được mở thành công chưa
             (ufw status | grep -q "$start_port:$end_port") && echo "$start_port-$end_port"
         else
-            # Check if the individual port has been successfully opened
+            # Kiểm tra xem cổng đơn lẻ đã được mở thành công chưa
             (ufw status | grep -q "$port") && echo "$port"
         fi
     done
 }
 
 delete_ports() {
-    # Display current rules with numbers
-    echo "Current UFW rules:"
+    # Hiển thị các quy tắc hiện tại kèm số thứ tự
+    echo "Các quy tắc UFW hiện tại:"
     ufw status numbered
 
-    # Ask the user how they want to delete rules
-    echo "Do you want to delete rules by:"
-    echo "1) Rule numbers"
-    echo "2) Ports"
-    read -rp "Enter your choice (1 or 2): " choice
+    # Hỏi người dùng muốn xóa quy tắc theo cách nào
+    echo "Sếp muốn xóa quy tắc theo:"
+    echo "1) Số thứ tự quy tắc"
+    echo "2) Số cổng (Port)"
+    read -rp "Nhập lựa chọn của sếp (1 hoặc 2): " choice
 
     if [[ $choice -eq 1 ]]; then
-        # Deleting by rule numbers
-        read -rp "Enter the rule numbers you want to delete (1, 2, etc.): " rule_numbers
+        # Xóa theo số thứ tự quy tắc
+        read -rp "Nhập số thứ tự quy tắc muốn xóa (ví dụ: 1,2,5): " rule_numbers
 
-        # Validate the input
+        # Kiểm tra đầu vào
         if ! [[ $rule_numbers =~ ^([0-9]+)(,[0-9]+)*$ ]]; then
-            echo "Error: Invalid input. Please enter a comma-separated list of rule numbers." >&2
+            echo -e "${red}Lỗi: Đầu vào không hợp lệ. Vui lòng nhập danh sách số thứ tự cách nhau bằng dấu phẩy.${plain}" >&2
             exit 1
         fi
 
-        # Split numbers into an array
+        # Chia các số vào một mảng
         IFS=',' read -ra RULE_NUMBERS <<<"$rule_numbers"
         for rule_number in "${RULE_NUMBERS[@]}"; do
-            # Delete the rule by number
-            ufw delete "$rule_number" || echo "Failed to delete rule number $rule_number"
+            # Xóa quy tắc theo số thứ tự
+            ufw delete "$rule_number" || echo "Không thể xóa quy tắc số $rule_number"
         done
 
-        echo "Selected rules have been deleted."
+        echo "Các quy tắc đã chọn đã được xóa."
 
     elif [[ $choice -eq 2 ]]; then
-        # Deleting by ports
-        read -rp "Enter the ports you want to delete (e.g. 80,443,2053 or range 400-500): " ports
+        # Xóa theo số cổng
+        read -rp "Nhập các cổng sếp muốn xóa (ví dụ: 80,443 hoặc dải 400-500): " ports
 
-        # Validate the input
+        # Kiểm tra đầu vào
         if ! [[ $ports =~ ^([0-9]+|[0-9]+-[0-9]+)(,([0-9]+|[0-9]+-[0-9]+))*$ ]]; then
-            echo "Error: Invalid input. Please enter a comma-separated list of ports or a range of ports (e.g. 80,443,2053 or 400-500)." >&2
+            echo -e "${red}Lỗi: Đầu vào không hợp lệ. Vui lòng nhập danh sách cổng hoặc dải cổng.${plain}" >&2
             exit 1
         fi
 
-        # Split ports into an array
+        # Chia các cổng vào một mảng
         IFS=',' read -ra PORT_LIST <<<"$ports"
         for port in "${PORT_LIST[@]}"; do
             if [[ $port == *-* ]]; then
-                # Split the port range
+                # Chia dải cổng
                 start_port=$(echo $port | cut -d'-' -f1)
                 end_port=$(echo $port | cut -d'-' -f2)
-                # Delete the port range
+                # Xóa dải cổng
                 ufw delete allow $start_port:$end_port/tcp
                 ufw delete allow $start_port:$end_port/udp
             else
-                # Delete a single port
+                # Xóa cổng đơn lẻ
                 ufw delete allow "$port"
             fi
         done
 
-        # Confirmation of deletion
-        echo "Deleted the specified ports:"
+        # Xác nhận việc xóa
+        echo "Đã xóa các cổng đã chỉ định:"
         for port in "${PORT_LIST[@]}"; do
             if [[ $port == *-* ]]; then
                 start_port=$(echo $port | cut -d'-' -f1)
                 end_port=$(echo $port | cut -d'-' -f2)
-                # Check if the port range has been deleted
+                # Kiểm tra xem dải cổng đã thực sự được xóa chưa
                 (ufw status | grep -q "$start_port:$end_port") || echo "$start_port-$end_port"
             else
-                # Check if the individual port has been deleted
+                # Kiểm tra xem cổng đơn lẻ đã thực sự được xóa chưa
                 (ufw status | grep -q "$port") || echo "$port"
             fi
         done
     else
-        echo "${red}Error:${plain} Invalid choice. Please enter 1 or 2." >&2
+        echo -e "${red}Lỗi:${plain} Lựa chọn không hợp lệ. Vui lòng nhập 1 hoặc 2." >&2
         exit 1
     fi
 }
@@ -934,7 +936,7 @@ update_geofiles() {
         "RU") dat_files=(geoip_RU geosite_RU); dat_source="runetfreedom/russia-v2ray-rules-dat";;
     esac
     for dat in "${dat_files[@]}"; do
-        # Remove suffix for remote filename (e.g., geoip_IR -> geoip)
+        # Xóa hậu tố cho tên tệp từ xa (ví dụ: geoip_IR -> geoip)
         remote_file="${dat%%_*}"
         curl -fLRo ${xui_folder}/bin/${dat}.dat -z ${xui_folder}/bin/${dat}.dat \
             https://github.com/${dat_source}/releases/latest/download/${remote_file}.dat
@@ -945,9 +947,9 @@ update_geo() {
     echo -e "${green}\t1.${plain} Loyalsoldier (geoip.dat, geosite.dat)"
     echo -e "${green}\t2.${plain} chocolate4u (geoip_IR.dat, geosite_IR.dat)"
     echo -e "${green}\t3.${plain} runetfreedom (geoip_RU.dat, geosite_RU.dat)"
-    echo -e "${green}\t4.${plain} All"
-    echo -e "${green}\t0.${plain} Back to Main Menu"
-    read -rp "Choose an option: " choice
+    echo -e "${green}\t4.${plain} Cập nhật tất cả"
+    echo -e "${green}\t0.${plain} Quay lại Menu chính"
+    read -rp "Vui lòng chọn một mục: " choice
 
     case "$choice" in
     0)
@@ -955,26 +957,26 @@ update_geo() {
         ;;
     1)
         update_geofiles "main"
-        echo -e "${green}Loyalsoldier datasets have been updated successfully!${plain}"
+        echo -e "${green}Dữ liệu Loyalsoldier đã được cập nhật thành công!${plain}"
         restart
         ;;
     2)
         update_geofiles "IR"
-        echo -e "${green}chocolate4u datasets have been updated successfully!${plain}"
+        echo -e "${green}Dữ liệu chocolate4u đã được cập nhật thành công!${plain}"
         restart
         ;;
     3)
         update_geofiles "RU"
-        echo -e "${green}runetfreedom datasets have been updated successfully!${plain}"
+        echo -e "${green}Dữ liệu runetfreedom đã được cập nhật thành công!${plain}"
         restart
         ;;
     4)
         update_all_geofiles
-        echo -e "${green}All geo files have been updated successfully!${plain}"
+        echo -e "${green}Tất cả các tệp Geo đã được cập nhật thành công!${plain}"
         restart
         ;;
     *)
-        echo -e "${red}Invalid option. Please select a valid number.${plain}\n"
+        echo -e "${red}Lựa chọn không hợp lệ. Vui lòng nhập đúng số tương ứng sếp ơi!${plain}\n"
         update_geo
         ;;
     esac
@@ -983,36 +985,36 @@ update_geo() {
 }
 
 install_acme() {
-    # Check if acme.sh is already installed
+    # Kiểm tra xem acme.sh đã được cài đặt chưa
     if command -v ~/.acme.sh/acme.sh &>/dev/null; then
-        LOGI "acme.sh is already installed."
+        LOGI "acme.sh đã được cài đặt sẵn rồi."
         return 0
     fi
 
-    LOGI "Installing acme.sh..."
-    cd ~ || return 1 # Ensure you can change to the home directory
+    LOGI "Đang tiến hành cài đặt acme.sh..."
+    cd ~ || return 1 # Đảm bảo có thể chuyển về thư mục home
 
     curl -s https://get.acme.sh | sh
     if [ $? -ne 0 ]; then
-        LOGE "Installation of acme.sh failed."
+        LOGE "Cài đặt acme.sh thất bại."
         return 1
     else
-        LOGI "Installation of acme.sh succeeded."
+        LOGI "Cài đặt acme.sh thành công rực rỡ!"
     fi
 
     return 0
 }
 
 ssl_cert_issue_main() {
-    echo -e "${green}\t1.${plain} Get SSL (Domain)"
-    echo -e "${green}\t2.${plain} Revoke"
-    echo -e "${green}\t3.${plain} Force Renew"
-    echo -e "${green}\t4.${plain} Show Existing Domains"
-    echo -e "${green}\t5.${plain} Set Cert paths for the panel"
-    echo -e "${green}\t6.${plain} Get SSL for IP Address (6-day cert, auto-renews)"
-    echo -e "${green}\t0.${plain} Back to Main Menu"
+    echo -e "${green}\t1.${plain} Lấy SSL cho Tên miền (Domain)"
+    echo -e "${green}\t2.${plain} Thu hồi chứng chỉ (Revoke)"
+    echo -e "${green}\t3.${plain} Gia hạn cưỡng bức (Force Renew)"
+    echo -e "${green}\t4.${plain} Xem danh sách Tên miền hiện có"
+    echo -e "${green}\t5.${plain} Thiết lập đường dẫn Cert cho Panel"
+    echo -e "${green}\t6.${plain} Lấy SSL cho địa chỉ IP (Cert 6 ngày, tự động gia hạn)"
+    echo -e "${green}\t0.${plain} Quay lại Menu chính"
 
-    read -rp "Choose an option: " choice
+    read -rp "Vui lòng chọn một mục: " choice
     case "$choice" in
     0)
         show_menu
@@ -1024,16 +1026,16 @@ ssl_cert_issue_main() {
     2)
         local domains=$(find /root/cert/ -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
         if [ -z "$domains" ]; then
-            echo "No certificates found to revoke."
+            echo "Không tìm thấy chứng chỉ nào để thu hồi."
         else
-            echo "Existing domains:"
+            echo "Các tên miền hiện có:"
             echo "$domains"
-            read -rp "Please enter a domain from the list to revoke the certificate: " domain
+            read -rp "Vui lòng nhập tên miền từ danh sách để thu hồi chứng chỉ: " domain
             if echo "$domains" | grep -qw "$domain"; then
                 ~/.acme.sh/acme.sh --revoke -d ${domain}
-                LOGI "Certificate revoked for domain: $domain"
+                LOGI "Đã thu hồi chứng chỉ cho tên miền: $domain"
             else
-                echo "Invalid domain entered."
+                echo "Tên miền nhập vào không hợp lệ."
             fi
         fi
         ssl_cert_issue_main
@@ -1041,16 +1043,16 @@ ssl_cert_issue_main() {
     3)
         local domains=$(find /root/cert/ -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
         if [ -z "$domains" ]; then
-            echo "No certificates found to renew."
+            echo "Không tìm thấy chứng chỉ nào để gia hạn."
         else
-            echo "Existing domains:"
+            echo "Các tên miền hiện có:"
             echo "$domains"
-            read -rp "Please enter a domain from the list to renew the SSL certificate: " domain
+            read -rp "Vui lòng nhập tên miền từ danh sách để gia hạn chứng chỉ SSL: " domain
             if echo "$domains" | grep -qw "$domain"; then
                 ~/.acme.sh/acme.sh --renew -d ${domain} --force
-                LOGI "Certificate forcefully renewed for domain: $domain"
+                LOGI "Đã cưỡng bức gia hạn chứng chỉ thành công cho tên miền: $domain"
             else
-                echo "Invalid domain entered."
+                echo "Tên miền nhập vào không hợp lệ."
             fi
         fi
         ssl_cert_issue_main
@@ -1058,18 +1060,18 @@ ssl_cert_issue_main() {
     4)
         local domains=$(find /root/cert/ -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
         if [ -z "$domains" ]; then
-            echo "No certificates found."
+            echo "Không tìm thấy chứng chỉ nào."
         else
-            echo "Existing domains and their paths:"
+            echo "Các tên miền hiện có và đường dẫn của chúng:"
             for domain in $domains; do
                 local cert_path="/root/cert/${domain}/fullchain.pem"
                 local key_path="/root/cert/${domain}/privkey.pem"
                 if [[ -f "${cert_path}" && -f "${key_path}" ]]; then
-                    echo -e "Domain: ${domain}"
-                    echo -e "\tCertificate Path: ${cert_path}"
-                    echo -e "\tPrivate Key Path: ${key_path}"
+                    echo -e "Tên miền: ${domain}"
+                    echo -e "\tĐường dẫn Chứng chỉ: ${cert_path}"
+                    echo -e "\tĐường dẫn Khóa riêng: ${key_path}"
                 else
-                    echo -e "Domain: ${domain} - Certificate or Key missing."
+                    echo -e "Tên miền: ${domain} - Thiếu Chứng chỉ hoặc Khóa."
                 fi
             done
         fi
@@ -1078,11 +1080,11 @@ ssl_cert_issue_main() {
     5)
         local domains=$(find /root/cert/ -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
         if [ -z "$domains" ]; then
-            echo "No certificates found."
+            echo "Không tìm thấy chứng chỉ nào."
         else
-            echo "Available domains:"
+            echo "Các tên miền khả dụng:"
             echo "$domains"
-            read -rp "Please choose a domain to set the panel paths: " domain
+            read -rp "Vui lòng chọn một tên miền để thiết lập đường dẫn cho panel: " domain
 
             if echo "$domains" | grep -qw "$domain"; then
                 local webCertFile="/root/cert/${domain}/fullchain.pem"
@@ -1090,25 +1092,25 @@ ssl_cert_issue_main() {
 
                 if [[ -f "${webCertFile}" && -f "${webKeyFile}" ]]; then
                     ${xui_folder}/x-ui cert -webCert "$webCertFile" -webCertKey "$webKeyFile"
-                    echo "Panel paths set for domain: $domain"
-                    echo "  - Certificate File: $webCertFile"
-                    echo "  - Private Key File: $webKeyFile"
+                    echo "Đã thiết lập đường dẫn panel cho tên miền: $domain"
+                    echo "  - Tệp Chứng chỉ: $webCertFile"
+                    echo "  - Tệp Khóa riêng: $webKeyFile"
                     restart
                 else
-                    echo "Certificate or private key not found for domain: $domain."
+                    echo "Không tìm thấy chứng chỉ hoặc khóa riêng cho tên miền: $domain."
                 fi
             else
-                echo "Invalid domain entered."
+                echo "Tên miền nhập vào không hợp lệ."
             fi
         fi
         ssl_cert_issue_main
         ;;
     6)
-        echo -e "${yellow}Let's Encrypt SSL Certificate for IP Address${plain}"
-        echo -e "This will obtain a certificate for your server's IP using the shortlived profile."
-        echo -e "${yellow}Certificate valid for ~6 days, auto-renews via acme.sh cron job.${plain}"
-        echo -e "${yellow}Port 80 must be open and accessible from the internet.${plain}"
-        confirm "Do you want to proceed?" "y"
+        echo -e "${yellow}Chứng chỉ SSL Let's Encrypt cho địa chỉ IP${plain}"
+        echo -e "Thao tác này sẽ lấy chứng chỉ cho IP máy chủ của sếp bằng cấu hình 'shortlived'."
+        echo -e "${yellow}Chứng chỉ có hiệu lực ~6 ngày, tự động gia hạn qua cron job của acme.sh.${plain}"
+        echo -e "${yellow}Lưu ý: Cổng 80 phải được mở và có thể truy cập từ internet.${plain}"
+        confirm "Sếp có muốn tiếp tục không?" "y"
         if [[ $? == 0 ]]; then
             ssl_cert_issue_for_ip
         fi
@@ -1116,48 +1118,48 @@ ssl_cert_issue_main() {
         ;;
 
     *)
-        echo -e "${red}Invalid option. Please select a valid number.${plain}\n"
+        echo -e "${red}Lựa chọn không hợp lệ. Vui lòng nhập đúng số sếp ơi!${plain}\n"
         ssl_cert_issue_main
         ;;
     esac
 }
 
 ssl_cert_issue_for_ip() {
-    LOGI "Starting automatic SSL certificate generation for server IP..."
-    LOGI "Using Let's Encrypt shortlived profile (~6 days validity, auto-renews)"
+    LOGI "Bắt đầu quy trình tự động tạo chứng chỉ SSL cho IP máy chủ..."
+    LOGI "Sử dụng cấu hình Let's Encrypt shortlived (có hiệu lực ~6 ngày, tự động gia hạn)"
     
     local existing_webBasePath=$(${xui_folder}/x-ui setting -show true | grep -Eo 'webBasePath: .+' | awk '{print $2}')
     local existing_port=$(${xui_folder}/x-ui setting -show true | grep -Eo 'port: .+' | awk '{print $2}')
     
-    # Get server IP
+    # Lấy địa chỉ IP máy chủ
     local server_ip=$(curl -s --max-time 3 https://api.ipify.org)
     if [ -z "$server_ip" ]; then
         server_ip=$(curl -s --max-time 3 https://4.ident.me)
     fi
     
     if [ -z "$server_ip" ]; then
-        LOGE "Failed to get server IP address"
+        LOGE "Không thể lấy địa chỉ IP của máy chủ sếp ơi!"
         return 1
     fi
     
-    LOGI "Server IP detected: ${server_ip}"
+    LOGI "Đã phát hiện IP máy chủ: ${server_ip}"
     
-    # Ask for optional IPv6
+    # Hỏi về địa chỉ IPv6 (tùy chọn)
     local ipv6_addr=""
-    read -rp "Do you have an IPv6 address to include? (leave empty to skip): " ipv6_addr
-    ipv6_addr="${ipv6_addr// /}"  # Trim whitespace
+    read -rp "Sếp có địa chỉ IPv6 nào muốn thêm vào không? (để trống nếu muốn bỏ qua): " ipv6_addr
+    ipv6_addr="${ipv6_addr// /}"  # Xóa khoảng trắng
     
-    # check for acme.sh first
+    # Kiểm tra acme.sh trước
     if ! command -v ~/.acme.sh/acme.sh &>/dev/null; then
-        LOGI "acme.sh not found, installing..."
+        LOGI "Không tìm thấy acme.sh, đang tiến hành cài đặt..."
         install_acme
         if [ $? -ne 0 ]; then
-            LOGE "Failed to install acme.sh"
+            LOGE "Cài đặt acme.sh thất bại rồi sếp!"
             return 1
         fi
     fi
     
-    # install socat
+    # Cài đặt socat
     case "${release}" in
     ubuntu | debian | armbian)
         apt-get update >/dev/null 2>&1 && apt-get install socat -y >/dev/null 2>&1
@@ -1182,61 +1184,60 @@ ssl_cert_issue_for_ip() {
         apk add socat curl openssl >/dev/null 2>&1
         ;;
     *)
-        LOGW "Unsupported OS for automatic socat installation"
+        LOGW "Hệ điều hành này không hỗ trợ cài đặt socat tự động"
         ;;
     esac
     
-    # Create certificate directory
+    # Tạo thư mục chứa chứng chỉ
     certPath="/root/cert/ip"
     mkdir -p "$certPath"
     
-    # Build domain arguments
+    # Xây dựng các tham số tên miền (IP)
     local domain_args="-d ${server_ip}"
     if [[ -n "$ipv6_addr" ]] && is_ipv6 "$ipv6_addr"; then
         domain_args="${domain_args} -d ${ipv6_addr}"
-        LOGI "Including IPv6 address: ${ipv6_addr}"
+        LOGI "Đã bao gồm địa chỉ IPv6: ${ipv6_addr}"
     fi
-    
-    # Choose port for HTTP-01 listener (default 80, allow override)
+ # Chọn cổng cho bộ lắng nghe HTTP-01 (mặc định 80)
     local WebPort=""
-    read -rp "Port to use for ACME HTTP-01 listener (default 80): " WebPort
+    read -rp "Cổng sử dụng cho bộ lắng nghe ACME HTTP-01 (mặc định 80): " WebPort
     WebPort="${WebPort:-80}"
     if ! [[ "${WebPort}" =~ ^[0-9]+$ ]] || ((WebPort < 1 || WebPort > 65535)); then
-        LOGE "Invalid port provided. Falling back to 80."
+        LOGE "Cổng không hợp lệ. Đang quay lại cổng mặc định 80."
         WebPort=80
     fi
-    LOGI "Using port ${WebPort} to issue certificate for IP: ${server_ip}"
+    LOGI "Đang sử dụng cổng ${WebPort} để cấp chứng chỉ cho IP: ${server_ip}"
     if [[ "${WebPort}" -ne 80 ]]; then
-        LOGI "Reminder: Let's Encrypt still reaches port 80; forward external port 80 to ${WebPort} for validation."
+        LOGI "Lưu ý: Let's Encrypt vẫn sẽ truy cập qua cổng 80; sếp cần chuyển hướng (forward) cổng 80 bên ngoài về cổng ${WebPort} để xác thực nhé."
     fi
 
     while true; do
         if is_port_in_use "${WebPort}"; then
-            LOGI "Port ${WebPort} is currently in use."
+            LOGI "Cổng ${WebPort} hiện đang được sử dụng rồi sếp ơi."
 
             local alt_port=""
-            read -rp "Enter another port for acme.sh standalone listener (leave empty to abort): " alt_port
+            read -rp "Nhập cổng khác cho acme.sh (để trống để hủy bỏ): " alt_port
             alt_port="${alt_port// /}"
             if [[ -z "${alt_port}" ]]; then
-                LOGE "Port ${WebPort} is busy; cannot proceed with issuance."
+                LOGE "Cổng ${WebPort} đang bận; không thể tiếp tục cấp chứng chỉ."
                 return 1
             fi
             if ! [[ "${alt_port}" =~ ^[0-9]+$ ]] || ((alt_port < 1 || alt_port > 65535)); then
-                LOGE "Invalid port provided."
+                LOGE "Cổng sếp nhập không hợp lệ."
                 return 1
             fi
             WebPort="${alt_port}"
             continue
         else
-            LOGI "Port ${WebPort} is free and ready for standalone validation."
+            LOGI "Cổng ${WebPort} đang trống và sẵn sàng để xác thực."
             break
         fi
     done
     
-    # Reload command - restarts panel after renewal
+    # Lệnh nạp lại - khởi động lại panel sau khi gia hạn
     local reloadCmd="systemctl restart x-ui 2>/dev/null || rc-service x-ui restart 2>/dev/null"
     
-    # issue the certificate for IP with shortlived profile
+    # Tiến hành cấp chứng chỉ cho IP với cấu hình shortlived
     ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt --force
     ~/.acme.sh/acme.sh --issue \
         ${domain_args} \
@@ -1248,58 +1249,57 @@ ssl_cert_issue_for_ip() {
         --force
     
     if [ $? -ne 0 ]; then
-        LOGE "Failed to issue certificate for IP: ${server_ip}"
-        LOGE "Make sure port ${WebPort} is open and the server is accessible from the internet"
-        # Cleanup acme.sh data for both IPv4 and IPv6 if specified
+        LOGE "Cấp chứng chỉ thất bại cho IP: ${server_ip}"
+        LOGE "Sếp hãy đảm bảo cổng ${WebPort} đã được mở và máy chủ có thể truy cập được từ internet."
+        # Dọn dẹp dữ liệu tạm nếu thất bại
         rm -rf ~/.acme.sh/${server_ip} 2>/dev/null
         [[ -n "$ipv6_addr" ]] && rm -rf ~/.acme.sh/${ipv6_addr} 2>/dev/null
         rm -rf ${certPath} 2>/dev/null
         return 1
     else
-        LOGI "Certificate issued successfully for IP: ${server_ip}"
+        LOGI "Chúc mừng sếp! Đã cấp chứng chỉ thành công cho IP: ${server_ip}"
     fi
-    
-    # Install the certificate
-    # Note: acme.sh may report "Reload error" and exit non-zero if reloadcmd fails,
-    # but the cert files are still installed. We check for files instead of exit code.
+    # Cài đặt chứng chỉ
+    # Lưu ý: acme.sh có thể báo "Reload error" nếu reloadcmd thất bại,
+    # nhưng tệp cert vẫn được cài đặt. Chúng ta kiểm tra tệp thay vì mã thoát (exit code).
     ~/.acme.sh/acme.sh --installcert -d ${server_ip} \
         --key-file "${certPath}/privkey.pem" \
         --fullchain-file "${certPath}/fullchain.pem" \
         --reloadcmd "${reloadCmd}" 2>&1 || true
     
-    # Verify certificate files exist (don't rely on exit code - reloadcmd failure causes non-zero)
+    # Xác minh tệp chứng chỉ tồn tại
     if [[ ! -f "${certPath}/fullchain.pem" || ! -f "${certPath}/privkey.pem" ]]; then
-        LOGE "Certificate files not found after installation"
-        # Cleanup acme.sh data for both IPv4 and IPv6 if specified
+        LOGE "Không tìm thấy tệp chứng chỉ sau khi cài đặt sếp ơi!"
+        # Dọn dẹp dữ liệu acme.sh
         rm -rf ~/.acme.sh/${server_ip} 2>/dev/null
         [[ -n "$ipv6_addr" ]] && rm -rf ~/.acme.sh/${ipv6_addr} 2>/dev/null
         rm -rf ${certPath} 2>/dev/null
         return 1
     fi
     
-    LOGI "Certificate files installed successfully"
+    LOGI "Đã cài đặt các tệp chứng chỉ thành công."
     
-    # enable auto-renew
+    # Bật tự động gia hạn
     ~/.acme.sh/acme.sh --upgrade --auto-upgrade >/dev/null 2>&1
     chmod 600 $certPath/privkey.pem 2>/dev/null
     chmod 644 $certPath/fullchain.pem 2>/dev/null
     
-    # Set certificate paths for the panel
+    # Thiết lập đường dẫn chứng chỉ cho panel
     local webCertFile="${certPath}/fullchain.pem"
     local webKeyFile="${certPath}/privkey.pem"
     
     if [[ -f "$webCertFile" && -f "$webKeyFile" ]]; then
         ${xui_folder}/x-ui cert -webCert "$webCertFile" -webCertKey "$webKeyFile"
-        LOGI "Certificate configured for panel"
-        LOGI "  - Certificate File: $webCertFile"
-        LOGI "  - Private Key File: $webKeyFile"
-        LOGI "  - Validity: ~6 days (auto-renews via acme.sh cron)"
-        echo -e "${green}Access URL: https://${server_ip}:${existing_port}${existing_webBasePath}${plain}"
-        LOGI "Panel will restart to apply SSL certificate..."
+        LOGI "Đã cấu hình chứng chỉ cho panel."
+        LOGI "  - Tệp Chứng chỉ: $webCertFile"
+        LOGI "  - Tệp Khóa riêng: $webKeyFile"
+        LOGI "  - Thời hạn: ~6 ngày (tự động gia hạn qua acme.sh cron)"
+        echo -e "${green}Đường dẫn truy cập: https://${server_ip}:${existing_port}${existing_webBasePath}${plain}"
+        LOGI "Panel sẽ khởi động lại để áp dụng chứng chỉ SSL..."
         restart
         return 0
     else
-        LOGE "Certificate files not found after installation"
+        LOGE "Không tìm thấy tệp chứng chỉ sau khi cài đặt."
         return 1
     fi
 }
@@ -1307,17 +1307,18 @@ ssl_cert_issue_for_ip() {
 ssl_cert_issue() {
     local existing_webBasePath=$(${xui_folder}/x-ui setting -show true | grep -Eo 'webBasePath: .+' | awk '{print $2}')
     local existing_port=$(${xui_folder}/x-ui setting -show true | grep -Eo 'port: .+' | awk '{print $2}')
-    # check for acme.sh first
+    
+    # Kiểm tra acme.sh trước
     if ! command -v ~/.acme.sh/acme.sh &>/dev/null; then
-        echo "acme.sh could not be found. we will install it"
+        echo "Không tìm thấy acme.sh. Hệ thống sẽ tiến hành cài đặt..."
         install_acme
         if [ $? -ne 0 ]; then
-            LOGE "install acme failed, please check logs"
+            LOGE "Cài đặt acme.sh thất bại, vui lòng kiểm tra log sếp nhé."
             exit 1
         fi
     fi
 
-    # install socat
+    # Cài đặt socat
     case "${release}" in
     ubuntu | debian | armbian)
         apt-get update >/dev/null 2>&1 && apt-get install socat -y >/dev/null 2>&1
@@ -1342,48 +1343,48 @@ ssl_cert_issue() {
         apk add socat curl openssl >/dev/null 2>&1
         ;;
     *)
-        LOGW "Unsupported OS for automatic socat installation"
+        LOGW "Hệ điều hành này không hỗ trợ cài đặt socat tự động."
         ;;
     esac
+
     if [ $? -ne 0 ]; then
-        LOGE "install socat failed, please check logs"
+        LOGE "Cài đặt socat thất bại, vui lòng kiểm tra lại sếp ơi!"
         exit 1
     else
-        LOGI "install socat succeed..."
+        LOGI "Cài đặt socat thành công..."
     fi
-
-    # get the domain here, and we need to verify it
+# Lấy tên miền và xác thực
     local domain=""
     while true; do
-        read -rp "Please enter your domain name: " domain
-        domain="${domain// /}"  # Trim whitespace
+        read -rp "Vui lòng nhập tên miền của sếp: " domain
+        domain="${domain// /}"  # Xóa khoảng trắng
         
         if [[ -z "$domain" ]]; then
-            LOGE "Domain name cannot be empty. Please try again."
+            LOGE "Tên miền không được để trống. Vui lòng thử lại sếp ơi."
             continue
         fi
         
         if ! is_domain "$domain"; then
-            LOGE "Invalid domain format: ${domain}. Please enter a valid domain name."
+            LOGE "Định dạng tên miền không hợp lệ: ${domain}. Sếp kiểm tra lại nhé."
             continue
         fi
         
         break
     done
-    LOGD "Your domain is: ${domain}, checking it..."
+    LOGD "Tên miền của sếp là: ${domain}, đang tiến hành kiểm tra..."
 
-    # check if there already exists a certificate
+    # Kiểm tra xem chứng chỉ đã tồn tại chưa
     local currentCert=$(~/.acme.sh/acme.sh --list | tail -1 | awk '{print $1}')
     if [ "${currentCert}" == "${domain}" ]; then
         local certInfo=$(~/.acme.sh/acme.sh --list)
-        LOGE "System already has certificates for this domain. Cannot issue again. Current certificate details:"
+        LOGE "Hệ thống đã có chứng chỉ cho tên miền này rồi, không cần cấp lại đâu sếp. Chi tiết hiện tại:"
         LOGI "$certInfo"
         exit 1
     else
-        LOGI "Your domain is ready for issuing certificates now..."
+        LOGI "Tên miền của sếp đã sẵn sàng để cấp chứng chỉ mới..."
     fi
 
-    # create a directory for the certificate
+    # Tạo thư mục lưu trữ chứng chỉ
     certPath="/root/cert/${domain}"
     if [ ! -d "$certPath" ]; then
         mkdir -p "$certPath"
@@ -1392,162 +1393,163 @@ ssl_cert_issue() {
         mkdir -p "$certPath"
     fi
 
-    # get the port number for the standalone server
+    # Lấy số cổng cho chế độ standalone
     local WebPort=80
-    read -rp "Please choose which port to use (default is 80): " WebPort
+    read -rp "Vui lòng chọn cổng sếp muốn sử dụng (mặc định là 80): " WebPort
     if [[ ${WebPort} -gt 65535 || ${WebPort} -lt 1 ]]; then
-        LOGE "Your input ${WebPort} is invalid, will use default port 80."
+        LOGE "Cổng ${WebPort} không hợp lệ, hệ thống sẽ dùng cổng mặc định 80."
         WebPort=80
     fi
-    LOGI "Will use port: ${WebPort} to issue certificates. Please make sure this port is open."
+    LOGI "Sẽ sử dụng cổng: ${WebPort} để cấp chứng chỉ. Sếp nhớ mở cổng này trên Firewall nhé!"
 
-    # issue the certificate
+    # Tiến hành cấp chứng chỉ
     ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt --force
     ~/.acme.sh/acme.sh --issue -d ${domain} --listen-v6 --standalone --httpport ${WebPort} --force
     if [ $? -ne 0 ]; then
-        LOGE "Issuing certificate failed, please check logs."
+        LOGE "Cấp chứng chỉ thất bại rồi sếp, vui lòng kiểm tra lại log xem sao."
         rm -rf ~/.acme.sh/${domain}
         exit 1
     else
-        LOGE "Issuing certificate succeeded, installing certificates..."
+        LOGI "Cấp chứng chỉ thành công rực rỡ! Đang tiến hành cài đặt..."
     fi
 
     reloadCmd="x-ui restart"
 
-    LOGI "Default --reloadcmd for ACME is: ${yellow}x-ui restart"
-    LOGI "This command will run on every certificate issue and renew."
-    read -rp "Would you like to modify --reloadcmd for ACME? (y/n): " setReloadcmd
+    LOGI "Lệnh nạp lại (--reloadcmd) mặc định là: ${yellow}x-ui restart${plain}"
+    LOGI "Lệnh này sẽ chạy mỗi khi chứng chỉ được cấp mới hoặc gia hạn."
+    read -rp "Sếp có muốn thay đổi lệnh nạp lại này không? (y/n): " setReloadcmd
     if [[ "$setReloadcmd" == "y" || "$setReloadcmd" == "Y" ]]; then
-        echo -e "\n${green}\t1.${plain} Preset: systemctl reload nginx ; x-ui restart"
-        echo -e "${green}\t2.${plain} Input your own command"
-        echo -e "${green}\t0.${plain} Keep default reloadcmd"
-        read -rp "Choose an option: " choice
+        echo -e "\n${green}\t1.${plain} Mẫu sẵn: systemctl reload nginx ; x-ui restart"
+        echo -e "${green}\t2.${plain} Sếp tự nhập lệnh mới"
+        echo -e "${green}\t0.${plain} Giữ lệnh mặc định"
+        read -rp "Vui lòng chọn một mục: " choice
         case "$choice" in
         1)
-            LOGI "Reloadcmd is: systemctl reload nginx ; x-ui restart"
+            LOGI "Lệnh nạp lại là: systemctl reload nginx ; x-ui restart"
             reloadCmd="systemctl reload nginx ; x-ui restart"
             ;;
         2)  
-            LOGD "It's recommended to put x-ui restart at the end, so it won't raise an error if other services fails"
-            read -rp "Please enter your reloadcmd (example: systemctl reload nginx ; x-ui restart): " reloadCmd
-            LOGI "Your reloadcmd is: ${reloadCmd}"
+            LOGD "Gợi ý: Sếp nên để 'x-ui restart' ở cuối cùng để tránh lỗi nếu các dịch vụ khác gặp sự cố."
+            read -rp "Vui lòng nhập lệnh của sếp (ví dụ: systemctl reload nginx ; x-ui restart): " reloadCmd
+            LOGI "Lệnh của sếp là: ${reloadCmd}"
             ;;
         *)
-            LOGI "Keep default reloadcmd"
+            LOGI "Giữ nguyên lệnh mặc định."
             ;;
         esac
     fi
-
-    # install the certificate
+ # Cài đặt chứng chỉ
+    # Lưu ý: acme.sh có thể báo lỗi nạp lại (Reload error) nếu reloadcmd thất bại,
+    # nhưng tệp chứng chỉ vẫn được cài đặt. Chúng ta kiểm tra tệp thay vì mã thoát.
     ~/.acme.sh/acme.sh --installcert -d ${domain} \
         --key-file /root/cert/${domain}/privkey.pem \
         --fullchain-file /root/cert/${domain}/fullchain.pem --reloadcmd "${reloadCmd}"
 
     if [ $? -ne 0 ]; then
-        LOGE "Installing certificate failed, exiting."
+        LOGE "Cài đặt chứng chỉ thất bại, đang thoát..."
         rm -rf ~/.acme.sh/${domain}
         exit 1
     else
-        LOGI "Installing certificate succeeded, enabling auto renew..."
+        LOGI "Cài đặt chứng chỉ thành công, đang bật tự động gia hạn..."
     fi
 
-    # enable auto-renew
+    # Bật tự động gia hạn
     ~/.acme.sh/acme.sh --upgrade --auto-upgrade
     if [ $? -ne 0 ]; then
-        LOGE "Auto renew failed, certificate details:"
+        LOGE "Tự động gia hạn thất bại, chi tiết chứng chỉ:"
         ls -lah cert/*
         chmod 600 $certPath/privkey.pem
         chmod 644 $certPath/fullchain.pem
         exit 1
     else
-        LOGI "Auto renew succeeded, certificate details:"
+        LOGI "Tự động gia hạn thành công, chi tiết chứng chỉ:"
         ls -lah cert/*
         chmod 600 $certPath/privkey.pem
         chmod 644 $certPath/fullchain.pem
     fi
 
-    # Prompt user to set panel paths after successful certificate installation
-    read -rp "Would you like to set this certificate for the panel? (y/n): " setPanel
+    # Hỏi người dùng thiết lập đường dẫn cho panel sau khi cài đặt thành công
+    read -rp "Sếp có muốn thiết lập chứng chỉ này cho panel luôn không? (y/n): " setPanel
     if [[ "$setPanel" == "y" || "$setPanel" == "Y" ]]; then
         local webCertFile="/root/cert/${domain}/fullchain.pem"
         local webKeyFile="/root/cert/${domain}/privkey.pem"
 
         if [[ -f "$webCertFile" && -f "$webKeyFile" ]]; then
             ${xui_folder}/x-ui cert -webCert "$webCertFile" -webCertKey "$webKeyFile"
-            LOGI "Panel paths set for domain: $domain"
-            LOGI "  - Certificate File: $webCertFile"
-            LOGI "  - Private Key File: $webKeyFile"
-            echo -e "${green}Access URL: https://${domain}:${existing_port}${existing_webBasePath}${plain}"
+            LOGI "Đã thiết lập đường dẫn panel cho tên miền: $domain"
+            LOGI "  - Tệp Chứng chỉ: $webCertFile"
+            LOGI "  - Tệp Khóa riêng: $webKeyFile"
+            echo -e "${green}Đường dẫn truy cập: https://${domain}:${existing_port}${existing_webBasePath}${plain}"
             restart
         else
-            LOGE "Error: Certificate or private key file not found for domain: $domain."
+            LOGE "Lỗi: Không tìm thấy tệp chứng chỉ hoặc khóa riêng cho tên miền: $domain."
         fi
     else
-        LOGI "Skipping panel path setting."
+        LOGI "Bỏ qua thiết lập đường dẫn panel."
     fi
 }
 
 ssl_cert_issue_CF() {
     local existing_webBasePath=$(${xui_folder}/x-ui setting -show true | grep -Eo 'webBasePath: .+' | awk '{print $2}')
     local existing_port=$(${xui_folder}/x-ui setting -show true | grep -Eo 'port: .+' | awk '{print $2}')
-    LOGI "****** Instructions for Use ******"
-    LOGI "Follow the steps below to complete the process:"
-    LOGI "1. Cloudflare Registered E-mail."
-    LOGI "2. Cloudflare Global API Key."
-    LOGI "3. The Domain Name."
-    LOGI "4. Once the certificate is issued, you will be prompted to set the certificate for the panel (optional)."
-    LOGI "5. The script also supports automatic renewal of the SSL certificate after installation."
+    LOGI "****** Hướng dẫn sử dụng ******"
+    LOGI "Sếp thực hiện theo các bước dưới đây để hoàn tất quá trình:"
+    LOGI "1. Chuẩn bị Email đăng ký Cloudflare."
+    LOGI "2. Chuẩn bị Cloudflare Global API Key."
+    LOGI "3. Nhập đúng Tên miền (Domain) đã trỏ về máy chủ."
+    LOGI "4. Sau khi cấp xong, sếp sẽ được hỏi để thiết lập SSL cho panel (tùy chọn)."
+    LOGI "5. Script hỗ trợ tự động gia hạn chứng chỉ SSL sau khi cài đặt."
 
-    confirm "Do you confirm the information and wish to proceed? [y/n]" "y"
+    confirm "Sếp xác nhận thông tin và muốn tiếp tục chứ? [y/n]" "y"
 
     if [ $? -eq 0 ]; then
-        # Check for acme.sh first
+        # Kiểm tra acme.sh trước
         if ! command -v ~/.acme.sh/acme.sh &>/dev/null; then
-            echo "acme.sh could not be found. We will install it."
+            echo "Không tìm thấy acme.sh. Hệ thống sẽ tiến hành cài đặt cho sếp."
             install_acme
             if [ $? -ne 0 ]; then
-                LOGE "Install acme failed, please check logs."
+                LOGE "Cài đặt acme thất bại, sếp vui lòng kiểm tra log nhé."
                 exit 1
             fi
         fi
 
         CF_Domain=""
 
-        LOGD "Please set a domain name:"
-        read -rp "Input your domain here: " CF_Domain
-        LOGD "Your domain name is set to: ${CF_Domain}"
+        LOGD "Thiết lập tên miền (Domain):"
+        read -rp "Nhập tên miền của sếp vào đây: " CF_Domain
+        LOGD "Tên miền đã đặt là: ${CF_Domain}"
 
-        # Set up Cloudflare API details
+        # Thiết lập chi tiết Cloudflare API
         CF_GlobalKey=""
         CF_AccountEmail=""
-        LOGD "Please set the API key:"
-        read -rp "Input your key here: " CF_GlobalKey
-        LOGD "Your API key is: ${CF_GlobalKey}"
+        LOGD "Thiết lập API Key:"
+        read -rp "Nhập Global API Key của sếp vào đây: " CF_GlobalKey
+        LOGD "API Key đã nhận: ${CF_GlobalKey}"
 
-        LOGD "Please set up registered email:"
-        read -rp "Input your email here: " CF_AccountEmail
-        LOGD "Your registered email address is: ${CF_AccountEmail}"
+        LOGD "Thiết lập Email đăng ký:"
+        read -rp "Nhập Email Cloudflare của sếp vào đây: " CF_AccountEmail
+        LOGD "Email đã nhận: ${CF_AccountEmail}"
 
-        # Set the default CA to Let's Encrypt
+     # Thiết lập CA mặc định sang Let's Encrypt
         ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt --force
         if [ $? -ne 0 ]; then
-            LOGE "Default CA, Let'sEncrypt fail, script exiting..."
+            LOGE "Thiết lập CA mặc định Let's Encrypt thất bại, đang thoát script..."
             exit 1
         fi
 
         export CF_Key="${CF_GlobalKey}"
         export CF_Email="${CF_AccountEmail}"
 
-        # Issue the certificate using Cloudflare DNS
+        # Cấp chứng chỉ sử dụng Cloudflare DNS
         ~/.acme.sh/acme.sh --issue --dns dns_cf -d ${CF_Domain} -d *.${CF_Domain} --log --force
         if [ $? -ne 0 ]; then
-            LOGE "Certificate issuance failed, script exiting..."
+            LOGE "Cấp chứng chỉ thất bại, đang thoát script..."
             exit 1
         else
-            LOGI "Certificate issued successfully, Installing..."
+            LOGI "Cấp chứng chỉ thành công, đang tiến hành cài đặt..."
         fi
 
-         # Install the certificate
+         # Cài đặt chứng chỉ
         certPath="/root/cert/${CF_Domain}"
         if [ -d "$certPath" ]; then
             rm -rf ${certPath}
@@ -1555,32 +1557,32 @@ ssl_cert_issue_CF() {
 
         mkdir -p ${certPath}
         if [ $? -ne 0 ]; then
-            LOGE "Failed to create directory: ${certPath}"
+            LOGE "Không thể tạo thư mục: ${certPath}"
             exit 1
         fi
 
         reloadCmd="x-ui restart"
 
-        LOGI "Default --reloadcmd for ACME is: ${yellow}x-ui restart"
-        LOGI "This command will run on every certificate issue and renew."
-        read -rp "Would you like to modify --reloadcmd for ACME? (y/n): " setReloadcmd
+        LOGI "Lệnh nạp lại (--reloadcmd) mặc định cho ACME là: ${yellow}x-ui restart${plain}"
+        LOGI "Lệnh này sẽ chạy mỗi khi cấp mới hoặc gia hạn chứng chỉ."
+        read -rp "Sếp có muốn thay đổi lệnh nạp lại (--reloadcmd) không? (y/n): " setReloadcmd
         if [[ "$setReloadcmd" == "y" || "$setReloadcmd" == "Y" ]]; then
-            echo -e "\n${green}\t1.${plain} Preset: systemctl reload nginx ; x-ui restart"
-            echo -e "${green}\t2.${plain} Input your own command"
-            echo -e "${green}\t0.${plain} Keep default reloadcmd"
-            read -rp "Choose an option: " choice
+            echo -e "\n${green}\t1.${plain} Mẫu sẵn: systemctl reload nginx ; x-ui restart"
+            echo -e "${green}\t2.${plain} Sếp tự nhập lệnh"
+            echo -e "${green}\t0.${plain} Giữ lệnh mặc định"
+            read -rp "Vui lòng chọn một mục: " choice
             case "$choice" in
             1)
-                LOGI "Reloadcmd is: systemctl reload nginx ; x-ui restart"
+                LOGI "Lệnh nạp lại là: systemctl reload nginx ; x-ui restart"
                 reloadCmd="systemctl reload nginx ; x-ui restart"
                 ;;
             2)  
-                LOGD "It's recommended to put x-ui restart at the end, so it won't raise an error if other services fails"
-                read -rp "Please enter your reloadcmd (example: systemctl reload nginx ; x-ui restart): " reloadCmd
-                LOGI "Your reloadcmd is: ${reloadCmd}"
+                LOGD "Gợi ý: Sếp nên để 'x-ui restart' ở cuối cùng để tránh lỗi nếu các dịch vụ khác gặp sự cố."
+                read -rp "Vui lòng nhập lệnh của sếp (ví dụ: systemctl reload nginx ; x-ui restart): " reloadCmd
+                LOGI "Lệnh của sếp là: ${reloadCmd}"
                 ;;
             *)
-                LOGI "Keep default reloadcmd"
+                LOGI "Giữ lệnh mặc định."
                 ;;
             esac
         fi
@@ -1589,42 +1591,43 @@ ssl_cert_issue_CF() {
             --fullchain-file ${certPath}/fullchain.pem --reloadcmd "${reloadCmd}"
         
         if [ $? -ne 0 ]; then
-            LOGE "Certificate installation failed, script exiting..."
+            LOGE "Cài đặt chứng chỉ thất bại, đang thoát script..."
             exit 1
         else
-            LOGI "Certificate installed successfully, Turning on automatic updates..."
+            LOGI "Cài đặt chứng chỉ thành công, đang bật tự động cập nhật..."
         fi
 
-        # Enable auto-update
+        # Bật tự động cập nhật
         ~/.acme.sh/acme.sh --upgrade --auto-upgrade
         if [ $? -ne 0 ]; then
-            LOGE "Auto update setup failed, script exiting..."
+            LOGE "Thiết lập tự động cập nhật thất bại, đang thoát script..."
             exit 1
         else
-            LOGI "The certificate is installed and auto-renewal is turned on. Specific information is as follows:"
+            LOGI "Chứng chỉ đã được cài đặt và tính năng tự động gia hạn đã được bật. Thông tin chi tiết như sau:"
             ls -lah ${certPath}/*
             chmod 600 ${certPath}/privkey.pem
             chmod 644 ${certPath}/fullchain.pem
         fi
 
-        # Prompt user to set panel paths after successful certificate installation
-        read -rp "Would you like to set this certificate for the panel? (y/n): " setPanel
+        # Hỏi người dùng thiết lập đường dẫn cho panel sau khi cài đặt thành công
+        read -rp "Sếp có muốn thiết lập chứng chỉ này cho panel luôn không? (y/n): " setPanel
         if [[ "$setPanel" == "y" || "$setPanel" == "Y" ]]; then
             local webCertFile="${certPath}/fullchain.pem"
             local webKeyFile="${certPath}/privkey.pem"
 
             if [[ -f "$webCertFile" && -f "$webKeyFile" ]]; then
                 ${xui_folder}/x-ui cert -webCert "$webCertFile" -webCertKey "$webKeyFile"
-                LOGI "Panel paths set for domain: $CF_Domain"
-                LOGI "  - Certificate File: $webCertFile"
-                LOGI "  - Private Key File: $webKeyFile"
-                echo -e "${green}Access URL: https://${CF_Domain}:${existing_port}${existing_webBasePath}${plain}"
+                LOGI "Đã thiết lập đường dẫn panel cho tên miền: $CF_Domain"
+                LOGI "  - Tệp Chứng chỉ: $webCertFile"
+                LOGI "  - Tệp Khóa riêng: $webKeyFile"
+                echo -e "${green}Đường dẫn truy cập: https://${CF_Domain}:${existing_port}${existing_webBasePath}${plain}"
+                LOGI "Panel sẽ khởi động lại để áp dụng chứng chỉ SSL..."
                 restart
             else
-                LOGE "Error: Certificate or private key file not found for domain: $CF_Domain."
+                LOGE "Lỗi: Không tìm thấy tệp chứng chỉ hoặc khóa riêng cho tên miền: $CF_Domain."
             fi
         else
-            LOGI "Skipping panel path setting."
+            LOGI "Bỏ qua thiết lập đường dẫn panel."
         fi
     else
         show_menu
@@ -1632,15 +1635,15 @@ ssl_cert_issue_CF() {
 }
 
 run_speedtest() {
-    # Check if Speedtest is already installed
+    # Kiểm tra xem Speedtest đã được cài đặt chưa
     if ! command -v speedtest &>/dev/null; then
-        # If not installed, determine installation method
+        # Nếu chưa cài đặt, xác định phương thức cài đặt
         if command -v snap &>/dev/null; then
-            # Use snap to install Speedtest
-            echo "Installing Speedtest using snap..."
+            # Sử dụng snap để cài đặt Speedtest
+            echo "Đang cài đặt Speedtest bằng snap sếp ơi..."
             snap install speedtest
         else
-            # Fallback to using package managers
+            # Chuyển sang sử dụng trình quản lý gói của hệ điều hành
             local pkg_manager=""
             local speedtest_install_script=""
 
@@ -1659,20 +1662,19 @@ run_speedtest() {
             fi
 
             if [[ -z $pkg_manager ]]; then
-                echo "Error: Package manager not found. You may need to install Speedtest manually."
+                echo -e "${red}Lỗi: Không tìm thấy trình quản lý gói. Sếp có thể cần cài đặt Speedtest thủ công nhé.${plain}"
                 return 1
             else
-                echo "Installing Speedtest using $pkg_manager..."
+                echo "Đang cài đặt Speedtest bằng $pkg_manager..."
                 curl -s $speedtest_install_script | bash
                 $pkg_manager install -y speedtest
             fi
         fi
     fi
 
+    # Tiến hành đo tốc độ
     speedtest
 }
-
-
 
 ip_validation() {
     ipv6_regex="^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$"
@@ -1680,24 +1682,24 @@ ip_validation() {
 }
 
 iplimit_main() {
-    echo -e "\n${green}\t1.${plain} Install Fail2ban and configure IP Limit"
-    echo -e "${green}\t2.${plain} Change Ban Duration"
-    echo -e "${green}\t3.${plain} Unban Everyone"
-    echo -e "${green}\t4.${plain} Ban Logs"
-    echo -e "${green}\t5.${plain} Ban an IP Address"
-    echo -e "${green}\t6.${plain} Unban an IP Address"
-    echo -e "${green}\t7.${plain} Real-Time Logs"
-    echo -e "${green}\t8.${plain} Service Status"
-    echo -e "${green}\t9.${plain} Service Restart"
-    echo -e "${green}\t10.${plain} Uninstall Fail2ban and IP Limit"
-    echo -e "${green}\t0.${plain} Back to Main Menu"
-    read -rp "Choose an option: " choice
+    echo -e "\n${green}\t1.${plain} Cài đặt Fail2ban và cấu hình Giới hạn IP"
+    echo -e "${green}\t2.${plain} Thay đổi thời gian chặn (Ban Duration)"
+    echo -e "${green}\t3.${plain} Bỏ chặn tất cả mọi người"
+    echo -e "${green}\t4.${plain} Nhật ký chặn (Ban Logs)"
+    echo -e "${green}\t5.${plain} Chặn một địa chỉ IP thủ công"
+    echo -e "${green}\t6.${plain} Bỏ chặn một địa chỉ IP thủ công"
+    echo -e "${green}\t7.${plain} Nhật ký thời gian thực (Real-Time)"
+    echo -e "${green}\t8.${plain} Trạng thái dịch vụ"
+    echo -e "${green}\t9.${plain} Khởi động lại dịch vụ"
+    echo -e "${green}\t10.${plain} Gỡ cài đặt Fail2ban và Giới hạn IP"
+    echo -e "${green}\t0.${plain} Quay lại Menu chính"
+    read -rp "Vui lòng chọn một mục: " choice
     case "$choice" in
     0)
         show_menu
         ;;
     1)
-        confirm "Proceed with installation of Fail2ban & IP Limit?" "y"
+        confirm "Tiến hành cài đặt Fail2ban & Giới hạn IP chứ sếp?" "y"
         if [[ $? == 0 ]]; then
             install_iplimit
         else
@@ -1705,7 +1707,7 @@ iplimit_main() {
         fi
         ;;
     2)
-        read -rp "Please enter new Ban Duration in Minutes [default 30]: " NUM
+        read -rp "Vui lòng nhập thời gian chặn mới (đơn vị: Phút) [mặc định 30]: " NUM
         if [[ $NUM =~ ^[0-9]+$ ]]; then
             create_iplimit_jails ${NUM}
             if [[ $release == "alpine" ]]; then
@@ -1713,20 +1715,21 @@ iplimit_main() {
             else
                 systemctl restart fail2ban
             fi
+            echo -e "${green}Đã thay đổi thời gian chặn thành ${NUM} phút.${plain}"
         else
-            echo -e "${red}${NUM} is not a number! Please, try again.${plain}"
+            echo -e "${red}${NUM} không phải là một con số! Vui lòng thử lại sếp ơi.${plain}"
         fi
         iplimit_main
         ;;
     3)
-        confirm "Proceed with Unbanning everyone from IP Limit jail?" "y"
+        confirm "Sếp chắc chắn muốn bỏ chặn TẤT CẢ mọi người chứ?" "y"
         if [[ $? == 0 ]]; then
             fail2ban-client reload --restart --unban 3x-ipl
             truncate -s 0 "${iplimit_banned_log_path}"
-            echo -e "${green}All users Unbanned successfully.${plain}"
+            echo -e "${green}Đã bỏ chặn tất cả người dùng thành công.${plain}"
             iplimit_main
         else
-            echo -e "${yellow}Cancelled.${plain}"
+            echo -e "${yellow}Đã hủy thao tác.${plain}"
         fi
         iplimit_main
         ;;
@@ -1735,24 +1738,24 @@ iplimit_main() {
         iplimit_main
         ;;
     5)
-        read -rp "Enter the IP address you want to ban: " ban_ip
+        read -rp "Nhập địa chỉ IP sếp muốn chặn: " ban_ip
         ip_validation
         if [[ $ban_ip =~ $ipv4_regex || $ban_ip =~ $ipv6_regex ]]; then
             fail2ban-client set 3x-ipl banip "$ban_ip"
-            echo -e "${green}IP Address ${ban_ip} has been banned successfully.${plain}"
+            echo -e "${green}Địa chỉ IP ${ban_ip} đã được chặn thành công.${plain}"
         else
-            echo -e "${red}Invalid IP address format! Please try again.${plain}"
+            echo -e "${red}Định dạng IP không hợp lệ! Vui lòng kiểm tra lại sếp nhé.${plain}"
         fi
         iplimit_main
         ;;
     6)
-        read -rp "Enter the IP address you want to unban: " unban_ip
+        read -rp "Nhập địa chỉ IP sếp muốn bỏ chặn: " unban_ip
         ip_validation
         if [[ $unban_ip =~ $ipv4_regex || $unban_ip =~ $ipv6_regex ]]; then
             fail2ban-client set 3x-ipl unbanip "$unban_ip"
-            echo -e "${green}IP Address ${unban_ip} has been unbanned successfully.${plain}"
+            echo -e "${green}Địa chỉ IP ${unban_ip} đã được bỏ chặn thành công.${plain}"
         else
-            echo -e "${red}Invalid IP address format! Please try again.${plain}"
+            echo -e "${red}Định dạng IP không hợp lệ! Vui lòng kiểm tra lại.${plain}"
         fi
         iplimit_main
         ;;
@@ -1770,6 +1773,7 @@ iplimit_main() {
         else
             systemctl restart fail2ban
         fi
+        echo -e "${green}Dịch vụ Fail2ban đã được khởi động lại.${plain}"
         iplimit_main
         ;;
     10)
@@ -1777,7 +1781,7 @@ iplimit_main() {
         iplimit_main
         ;;
     *)
-        echo -e "${red}Invalid option. Please select a valid number.${plain}\n"
+        echo -e "${red}Lựa chọn không hợp lệ. Vui lòng nhập đúng số tương ứng sếp ơi!${plain}\n"
         iplimit_main
         ;;
     esac
@@ -1785,9 +1789,9 @@ iplimit_main() {
 
 install_iplimit() {
     if ! command -v fail2ban-client &>/dev/null; then
-        echo -e "${green}Fail2ban is not installed. Installing now...!${plain}\n"
+        echo -e "${green}Fail2ban chưa được cài đặt. Đang tiến hành cài đặt ngay sếp nhé...!${plain}\n"
 
-        # Check the OS and install necessary packages
+        # Kiểm tra hệ điều hành và cài đặt các gói cần thiết
         case "${release}" in
         ubuntu)
             apt-get update
@@ -1825,41 +1829,41 @@ install_iplimit() {
             apk add fail2ban
             ;;
         *)
-            echo -e "${red}Unsupported operating system. Please check the script and install the necessary packages manually.${plain}\n"
+            echo -e "${red}Hệ điều hành không được hỗ trợ. Vui lòng kiểm tra lại script hoặc cài đặt thủ công các gói cần thiết sếp ơi!${plain}\n"
             exit 1
             ;;
         esac
 
         if ! command -v fail2ban-client &>/dev/null; then
-            echo -e "${red}Fail2ban installation failed.${plain}\n"
+            echo -e "${red}Cài đặt Fail2ban thất bại rồi.${plain}\n"
             exit 1
         fi
 
-        echo -e "${green}Fail2ban installed successfully!${plain}\n"
+        echo -e "${green}Cài đặt Fail2ban thành công rực rỡ!${plain}\n"
     else
-        echo -e "${yellow}Fail2ban is already installed.${plain}\n"
+        echo -e "${yellow}Fail2ban đã được cài đặt sẵn trên hệ thống rồi.${plain}\n"
     fi
 
-    echo -e "${green}Configuring IP Limit...${plain}\n"
+    echo -e "${green}Đang cấu hình Giới hạn IP (IP Limit)...${plain}\n"
 
-    # make sure there's no conflict for jail files
+    # Đảm bảo không có xung đột giữa các file jail
     iplimit_remove_conflicts
 
-    # Check if log file exists
+    # Kiểm tra nếu file log chưa tồn tại thì tạo mới để tránh lỗi
     if ! test -f "${iplimit_banned_log_path}"; then
         touch ${iplimit_banned_log_path}
     fi
 
-    # Check if service log file exists so fail2ban won't return error
+    # Kiểm tra file log dịch vụ để fail2ban không báo lỗi khi khởi chạy
     if ! test -f "${iplimit_log_path}"; then
         touch ${iplimit_log_path}
     fi
 
-    # Create the iplimit jail files
-    # we didn't pass the bantime here to use the default value
+    # Tạo các file cấu hình jail cho iplimit
+    # Chúng ta không truyền tham số bantime ở đây để sử dụng giá trị mặc định
     create_iplimit_jails
 
-    # Launching fail2ban
+    # Khởi chạy fail2ban
     if [[ $release == "alpine" ]]; then
         if [[ $(rc-service fail2ban status | grep -F 'status: started' -c) == 0 ]]; then
             rc-service fail2ban start
@@ -1876,15 +1880,15 @@ install_iplimit() {
         systemctl enable fail2ban
     fi
 
-    echo -e "${green}IP Limit installed and configured successfully!${plain}\n"
+    echo -e "${green}Đã cài đặt và cấu hình Giới hạn IP thành công!${plain}\n"
     before_show_menu
 }
 
 remove_iplimit() {
-    echo -e "${green}\t1.${plain} Only remove IP Limit configurations"
-    echo -e "${green}\t2.${plain} Uninstall Fail2ban and IP Limit"
-    echo -e "${green}\t0.${plain} Back to Main Menu"
-    read -rp "Choose an option: " num
+    echo -e "${green}\t1.${plain} Chỉ xóa cấu hình Giới hạn IP (Giữ lại Fail2ban)"
+    echo -e "${green}\t2.${plain} Gỡ cài đặt hoàn toàn Fail2ban và Giới hạn IP"
+    echo -e "${green}\t0.${plain} Quay lại Menu chính"
+    read -rp "Vui lòng chọn một mục: " num
     case "$num" in
     1)
         rm -f /etc/fail2ban/filter.d/3x-ipl.conf
@@ -1895,7 +1899,7 @@ remove_iplimit() {
         else
             systemctl restart fail2ban
         fi
-        echo -e "${green}IP Limit removed successfully!${plain}\n"
+        echo -e "${green}Đã xóa cấu hình Giới hạn IP thành công!${plain}\n"
         before_show_menu
         ;;
     2)
@@ -1931,18 +1935,18 @@ remove_iplimit() {
             apk del fail2ban
             ;;
         *)
-            echo -e "${red}Unsupported operating system. Please uninstall Fail2ban manually.${plain}\n"
+            echo -e "${red}Hệ điều hành không được hỗ trợ. Sếp vui lòng gỡ cài đặt Fail2ban thủ công nhé.${plain}\n"
             exit 1
             ;;
         esac
-        echo -e "${green}Fail2ban and IP Limit removed successfully!${plain}\n"
+        echo -e "${green}Đã gỡ cài đặt Fail2ban và Giới hạn IP thành công!${plain}\n"
         before_show_menu
         ;;
     0)
         show_menu
         ;;
     *)
-        echo -e "${red}Invalid option. Please select a valid number.${plain}\n"
+        echo -e "${red}Lựa chọn không hợp lệ. Vui lòng chọn đúng số trên menu sếp nhé.${plain}\n"
         remove_iplimit
         ;;
     esac
@@ -1951,53 +1955,54 @@ remove_iplimit() {
 show_banlog() {
     local system_log="/var/log/fail2ban.log"
 
-    echo -e "${green}Checking ban logs...${plain}\n"
+    echo -e "${green}Đang kiểm tra nhật ký chặn (ban logs)...${plain}\n"
 
     if [[ $release == "alpine" ]]; then
         if [[ $(rc-service fail2ban status | grep -F 'status: started' -c) == 0 ]]; then
-            echo -e "${red}Fail2ban service is not running!${plain}\n"
+            echo -e "${red}Dịch vụ Fail2ban hiện không chạy!${plain}\n"
             return 1
         fi
     else
         if ! systemctl is-active --quiet fail2ban; then
-            echo -e "${red}Fail2ban service is not running!${plain}\n"
+            echo -e "${red}Dịch vụ Fail2ban hiện không chạy!${plain}\n"
             return 1
         fi
     fi
 
     if [[ -f "$system_log" ]]; then
-        echo -e "${green}Recent system ban activities from fail2ban.log:${plain}"
-        grep "3x-ipl" "$system_log" | grep -E "Ban|Unban" | tail -n 10 || echo -e "${yellow}No recent system ban activities found${plain}"
+        echo -e "${green}Hoạt động chặn/bỏ chặn hệ thống gần đây (từ fail2ban.log):${plain}"
+        grep "3x-ipl" "$system_log" | grep -E "Ban|Unban" | tail -n 10 || echo -e "${yellow}Không tìm thấy hoạt động chặn nào gần đây.${plain}"
         echo ""
     fi
 
     if [[ -f "${iplimit_banned_log_path}" ]]; then
-        echo -e "${green}3X-IPL ban log entries:${plain}"
+        echo -e "${green}Các mục nhật ký chặn 3X-IPL:${plain}"
         if [[ -s "${iplimit_banned_log_path}" ]]; then
-            grep -v "INIT" "${iplimit_banned_log_path}" | tail -n 10 || echo -e "${yellow}No ban entries found${plain}"
+            grep -v "INIT" "${iplimit_banned_log_path}" | tail -n 10 || echo -e "${yellow}Không tìm thấy lịch sử chặn nào.${plain}"
         else
-            echo -e "${yellow}Ban log file is empty${plain}"
+            echo -e "${yellow}Tệp nhật ký chặn đang trống.${plain}"
         fi
     else
-        echo -e "${red}Ban log file not found at: ${iplimit_banned_log_path}${plain}"
+        echo -e "${red}Không tìm thấy tệp nhật ký tại: ${iplimit_banned_log_path}${plain}"
     fi
 
-    echo -e "\n${green}Current jail status:${plain}"
-    fail2ban-client status 3x-ipl || echo -e "${yellow}Unable to get jail status${plain}"
+    echo -e "\n${green}Trạng thái 'nhà tù' (jail) hiện tại:${plain}"
+    fail2ban-client status 3x-ipl || echo -e "${yellow}Không thể lấy trạng thái jail.${plain}"
 }
 
 create_iplimit_jails() {
-    # Use default bantime if not passed => 30 minutes
+    # Sử dụng thời gian chặn mặc định nếu không truyền tham số => 30 phút
     local bantime="${1:-30}"
 
-    # Uncomment 'allowipv6 = auto' in fail2ban.conf
+    # Bỏ chú thích 'allowipv6 = auto' trong fail2ban.conf để hỗ trợ IPv6
     sed -i 's/#allowipv6 = auto/allowipv6 = auto/g' /etc/fail2ban/fail2ban.conf
 
-    # On Debian 12+ fail2ban's default backend should be changed to systemd
+    # Trên Debian 12+, backend mặc định của fail2ban nên được chuyển sang systemd
     if [[  "${release}" == "debian" && ${os_version} -ge 12 ]]; then
         sed -i '0,/action =/s/backend = auto/backend = systemd/' /etc/fail2ban/jail.conf
     fi
 
+    # Tạo tệp cấu hình jail cho 3x-ui
     cat << EOF > /etc/fail2ban/jail.d/3x-ipl.conf
 [3x-ipl]
 enabled=true
@@ -2010,6 +2015,7 @@ findtime=32
 bantime=${bantime}m
 EOF
 
+    # Tạo tệp định nghĩa bộ lọc (filter)
     cat << EOF > /etc/fail2ban/filter.d/3x-ipl.conf
 [Definition]
 datepattern = ^%%Y/%%m/%%d %%H:%%M:%%S
@@ -2017,6 +2023,7 @@ failregex   = \[LIMIT_IP\]\s*Email\s*=\s*<F-USER>.+</F-USER>\s*\|\|\s*Disconnect
 ignoreregex =
 EOF
 
+    # Tạo tệp định nghĩa hành động (action) chặn bằng iptables
     cat << EOF > /etc/fail2ban/action.d/3x-ipl.conf
 [INCLUDES]
 before = iptables-allports.conf
@@ -2033,10 +2040,10 @@ actionstop = <iptables> -D <chain> -p <protocol> -j f2b-<name>
 actioncheck = <iptables> -n -L <chain> | grep -q 'f2b-<name>[ \t]'
 
 actionban = <iptables> -I f2b-<name> 1 -s <ip> -j <blocktype>
-            echo "\$(date +"%%Y/%%m/%%d %%H:%%M:%%S")   BAN   [Email] = <F-USER> [IP] = <ip> banned for <bantime> seconds." >> ${iplimit_banned_log_path}
+            echo "\$(date +"%%Y/%%m/%%d %%H:%%M:%%S")   BAN   [Email] = <F-USER> [IP] = <ip> bị chặn trong <bantime> giây." >> ${iplimit_banned_log_path}
 
 actionunban = <iptables> -D f2b-<name> -s <ip> -j <blocktype>
-              echo "\$(date +"%%Y/%%m/%%d %%H:%%M:%%S")   UNBAN   [Email] = <F-USER> [IP] = <ip> unbanned." >> ${iplimit_banned_log_path}
+              echo "\$(date +"%%Y/%%m/%%d %%H:%%M:%%S")   UNBAN   [Email] = <F-USER> [IP] = <ip> đã được bỏ chặn." >> ${iplimit_banned_log_path}
 
 [Init]
 name = default
@@ -2044,7 +2051,7 @@ protocol = tcp
 chain = INPUT
 EOF
 
-    echo -e "${green}Ip Limit jail files created with a bantime of ${bantime} minutes.${plain}"
+    echo -e "${green}Đã tạo các tệp cấu hình jail Giới hạn IP với thời gian chặn là ${bantime} phút.${plain}"
 }
 
 iplimit_remove_conflicts() {
@@ -2054,10 +2061,10 @@ iplimit_remove_conflicts() {
     )
 
     for file in "${jail_files[@]}"; do
-        # Check for [3x-ipl] config in jail file then remove it
+        # Kiểm tra xem có cấu hình [3x-ipl] cũ trong tệp jail không và xóa bỏ để tránh xung đột
         if test -f "${file}" && grep -qw '3x-ipl' ${file}; then
             sed -i "/\[3x-ipl\]/,/^$/d" ${file}
-            echo -e "${yellow}Removing conflicts of [3x-ipl] in jail (${file})!${plain}\n"
+            echo -e "${yellow}Đang loại bỏ các xung đột của [3x-ipl] trong tệp jail (${file})!${plain}\n"
         fi
     done
 }
@@ -2065,11 +2072,11 @@ iplimit_remove_conflicts() {
 SSH_port_forwarding() {
     local URL_lists=(
         "https://api4.ipify.org"
-		"https://ipv4.icanhazip.com"
-		"https://v4.api.ipinfo.io/ip"
-		"https://ipv4.myexternalip.com/raw"
-		"https://4.ident.me"
-		"https://check-host.net/ip"
+        "https://ipv4.icanhazip.com"
+        "https://v4.api.ipinfo.io/ip"
+        "https://ipv4.myexternalip.com/raw"
+        "https://4.ident.me"
+        "https://check-host.net/ip"
     )
     local server_ip=""
     for ip_address in "${URL_lists[@]}"; do
@@ -2092,66 +2099,66 @@ SSH_port_forwarding() {
     local listen_choice=""
 
     if [[ -n "$existing_cert" && -n "$existing_key" ]]; then
-        echo -e "${green}Panel is secure with SSL.${plain}"
+        echo -e "${green}Panel đã được bảo mật bằng SSL rồi sếp nhé.${plain}"
         before_show_menu
     fi
     if [[ -z "$existing_cert" && -z "$existing_key" && (-z "$existing_listenIP" || "$existing_listenIP" == "0.0.0.0") ]]; then
-        echo -e "\n${red}Warning: No Cert and Key found! The panel is not secure.${plain}"
-        echo "Please obtain a certificate or set up SSH port forwarding."
+        echo -e "\n${red}Cảnh báo: Không tìm thấy Cert và Key! Panel hiện tại không an toàn.${plain}"
+        echo "Vui lòng cài đặt SSL hoặc thiết lập Chuyển tiếp cổng qua SSH (SSH port forwarding)."
     fi
 
     if [[ -n "$existing_listenIP" && "$existing_listenIP" != "0.0.0.0" && (-z "$existing_cert" && -z "$existing_key") ]]; then
-        echo -e "\n${green}Current SSH Port Forwarding Configuration:${plain}"
-        echo -e "Standard SSH command:"
+        echo -e "\n${green}Cấu hình Chuyển tiếp cổng SSH hiện tại:${plain}"
+        echo -e "Lệnh SSH tiêu chuẩn:"
         echo -e "${yellow}ssh -L 2222:${existing_listenIP}:${existing_port} root@${server_ip}${plain}"
-        echo -e "\nIf using SSH key:"
-        echo -e "${yellow}ssh -i <sshkeypath> -L 2222:${existing_listenIP}:${existing_port} root@${server_ip}${plain}"
-        echo -e "\nAfter connecting, access the panel at:"
+        echo -e "\nNếu sử dụng SSH Key:"
+        echo -e "${yellow}ssh -i <đường_dẫn_key> -L 2222:${existing_listenIP}:${existing_port} root@${server_ip}${plain}"
+        echo -e "\nSau khi kết nối, sếp truy cập panel tại đường dẫn:"
         echo -e "${yellow}http://localhost:2222${existing_webBasePath}${plain}"
     fi
 
-    echo -e "\nChoose an option:"
-    echo -e "${green}1.${plain} Set listen IP"
-    echo -e "${green}2.${plain} Clear listen IP"
-    echo -e "${green}0.${plain} Back to Main Menu"
-    read -rp "Choose an option: " num
+    echo -e "\nVui lòng chọn một mục:"
+    echo -e "${green}1.${plain} Thiết lập IP lắng nghe (Listen IP)"
+    echo -e "${green}2.${plain} Gỡ bỏ IP lắng nghe (Về mặc định 0.0.0.0)"
+    echo -e "${green}0.${plain} Quay lại Menu chính"
+    read -rp "Lựa chọn của sếp: " num
 
     case "$num" in
     1)
         if [[ -z "$existing_listenIP" || "$existing_listenIP" == "0.0.0.0" ]]; then
-            echo -e "\nNo listenIP configured. Choose an option:"
-            echo -e "1. Use default IP (127.0.0.1)"
-            echo -e "2. Set a custom IP"
-            read -rp "Select an option (1 or 2): " listen_choice
+            echo -e "\nChưa cấu hình listenIP. Chọn một tùy chọn:"
+            echo -e "1. Sử dụng IP mặc định (127.0.0.1)"
+            echo -e "2. Nhập IP tùy chỉnh"
+            read -rp "Lựa chọn của sếp (1 hoặc 2): " listen_choice
 
             config_listenIP="127.0.0.1"
-            [[ "$listen_choice" == "2" ]] && read -rp "Enter custom IP to listen on: " config_listenIP
+            [[ "$listen_choice" == "2" ]] && read -rp "Nhập IP tùy chỉnh sếp muốn lắng nghe: " config_listenIP
 
             ${xui_folder}/x-ui setting -listenIP "${config_listenIP}" >/dev/null 2>&1
-            echo -e "${green}listen IP has been set to ${config_listenIP}.${plain}"
-            echo -e "\n${green}SSH Port Forwarding Configuration:${plain}"
-            echo -e "Standard SSH command:"
+            echo -e "${green}Đã thiết lập Listen IP thành ${config_listenIP}.${plain}"
+            echo -e "\n${green}Cấu hình Chuyển tiếp cổng SSH (Sếp chạy lệnh này ở máy cá nhân):${plain}"
+            echo -e "Lệnh SSH tiêu chuẩn:"
             echo -e "${yellow}ssh -L 2222:${config_listenIP}:${existing_port} root@${server_ip}${plain}"
-            echo -e "\nIf using SSH key:"
-            echo -e "${yellow}ssh -i <sshkeypath> -L 2222:${config_listenIP}:${existing_port} root@${server_ip}${plain}"
-            echo -e "\nAfter connecting, access the panel at:"
+            echo -e "\nNếu dùng SSH Key:"
+            echo -e "${yellow}ssh -i <đường_dẫn_key> -L 2222:${config_listenIP}:${existing_port} root@${server_ip}${plain}"
+            echo -e "\nSau khi kết nối SSH xong, sếp mở trình duyệt và truy cập:"
             echo -e "${yellow}http://localhost:2222${existing_webBasePath}${plain}"
             restart
         else
             config_listenIP="${existing_listenIP}"
-            echo -e "${green}Current listen IP is already set to ${config_listenIP}.${plain}"
+            echo -e "${green}Listen IP hiện tại đã được thiết lập là ${config_listenIP} rồi sếp.${plain}"
         fi
         ;;
     2)
         ${xui_folder}/x-ui setting -listenIP 0.0.0.0 >/dev/null 2>&1
-        echo -e "${green}Listen IP has been cleared.${plain}"
+        echo -e "${green}Đã gỡ bỏ Listen IP (Panel hiện có thể truy cập công khai qua IP VPS).${plain}"
         restart
         ;;
     0)
         show_menu
         ;;
     *)
-        echo -e "${red}Invalid option. Please select a valid number.${plain}\n"
+        echo -e "${red}Lựa chọn không hợp lệ. Vui lòng chọn lại nhé sếp.${plain}\n"
         SSH_port_forwarding
         ;;
     esac
@@ -2159,68 +2166,68 @@ SSH_port_forwarding() {
 
 show_usage() {
     echo -e "┌────────────────────────────────────────────────────────────────┐
-│  ${blue}x-ui control menu usages (subcommands):${plain}                       │
+│  ${blue}Hướng dẫn sử dụng lệnh x-ui (subcommands):${plain}                    │
 │                                                                │
-│  ${blue}x-ui${plain}                       - Admin Management Script          │
-│  ${blue}x-ui start${plain}                 - Start                            │
-│  ${blue}x-ui stop${plain}                  - Stop                             │
-│  ${blue}x-ui restart${plain}               - Restart                          │
-|  ${blue}x-ui restart-xray${plain}          - Restart Xray                     │
-│  ${blue}x-ui status${plain}                - Current Status                   │
-│  ${blue}x-ui settings${plain}              - Current Settings                 │
-│  ${blue}x-ui enable${plain}                - Enable Autostart on OS Startup   │
-│  ${blue}x-ui disable${plain}               - Disable Autostart on OS Startup  │
-│  ${blue}x-ui log${plain}                   - Check logs                       │
-│  ${blue}x-ui banlog${plain}                - Check Fail2ban ban logs          │
-│  ${blue}x-ui update${plain}                - Update                           │
-│  ${blue}x-ui update-all-geofiles${plain}   - Update all geo files             │
-│  ${blue}x-ui legacy${plain}                - Legacy version                   │
-│  ${blue}x-ui install${plain}               - Install                          │
-│  ${blue}x-ui uninstall${plain}             - Uninstall                        │
+│  ${blue}x-ui${plain}                     - Script quản trị Admin              │
+│  ${blue}x-ui start${plain}               - Khởi động                          │
+│  ${blue}x-ui stop${plain}                - Dừng                               │
+│  ${blue}x-ui restart${plain}             - Khởi động lại                      │
+|  ${blue}x-ui restart-xray${plain}        - Khởi động lại Xray                 │
+│  ${blue}x-ui status${plain}              - Trạng thái hiện tại                │
+│  ${blue}x-ui settings${plain}            - Cài đặt hiện tại                   │
+│  ${blue}x-ui enable${plain}              - Bật tự động chạy khi khởi động OS  │
+│  ${blue}x-ui disable${plain}             - Tắt tự động chạy khi khởi động OS  │
+│  ${blue}x-ui log${plain}                 - Xem nhật ký (logs)                 │
+│  ${blue}x-ui banlog${plain}              - Xem nhật ký chặn của Fail2ban      │
+│  ${blue}x-ui update${plain}              - Cập nhật phiên bản                 │
+│  ${blue}x-ui update-all-geofiles${plain} - Cập nhật tất cả các tệp Geo        │
+│  ${blue}x-ui legacy${plain}              - Phiên bản cũ (Legacy)              │
+│  ${blue}x-ui install${plain}             - Cài đặt mới                        │
+│  ${blue}x-ui uninstall${plain}           - Gỡ cài đặt                         │
 └────────────────────────────────────────────────────────────────┘"
 }
 
 show_menu() {
     echo -e "
 ╔────────────────────────────────────────────────╗
-│   ${green}3X-UI Panel Management Script${plain}                │
-│   ${green}0.${plain} Exit Script                               │
+│      ${green}Script Quản Lý Panel 3X-UI${plain}                │
+│      ${green}0.${plain} Thoát Script                               │
 │────────────────────────────────────────────────│
-│   ${green}1.${plain} Install                                   │
-│   ${green}2.${plain} Update                                    │
-│   ${green}3.${plain} Update Menu                               │
-│   ${green}4.${plain} Legacy Version                            │
-│   ${green}5.${plain} Uninstall                                 │
+│      ${green}1.${plain} Cài đặt                                    │
+│      ${green}2.${plain} Cập nhật                                   │
+│      ${green}3.${plain} Cập nhật Menu                              │
+│      ${green}4.${plain} Phiên bản cũ (Legacy)                      │
+│      ${green}5.${plain} Gỡ cài đặt                                 │
 │────────────────────────────────────────────────│
-│   ${green}6.${plain} Reset Username & Password                 │
-│   ${green}7.${plain} Reset Web Base Path                       │
-│   ${green}8.${plain} Reset Settings                            │
-│   ${green}9.${plain} Change Port                               │
-│  ${green}10.${plain} View Current Settings                     │
+│      ${green}6.${plain} Đặt lại Tài khoản & Mật khẩu               │
+│      ${green}7.${plain} Đặt lại Web Base Path                      │
+│      ${green}8.${plain} Đặt lại toàn bộ cài đặt                    │
+│      ${green}9.${plain} Thay đổi cổng (Port)                       │
+│     ${green}10.${plain} Xem cài đặt hiện tại                       │
 │────────────────────────────────────────────────│
-│  ${green}11.${plain} Start                                     │
-│  ${green}12.${plain} Stop                                      │
-│  ${green}13.${plain} Restart                                   │
-|  ${green}14.${plain} Restart Xray                              │
-│  ${green}15.${plain} Check Status                              │
-│  ${green}16.${plain} Logs Management                           │
+│     ${green}11.${plain} Khởi động                                  │
+│     ${green}12.${plain} Dừng                                      │
+│     ${green}13.${plain} Khởi động lại                              │
+|     ${green}14.${plain} Khởi động lại Xray                         │
+│     ${green}15.${plain} Kiểm tra trạng thái                        │
+│     ${green}16.${plain} Quản lý nhật ký (Logs)                     │
 │────────────────────────────────────────────────│
-│  ${green}17.${plain} Enable Autostart                          │
-│  ${green}18.${plain} Disable Autostart                         │
+│     ${green}17.${plain} Bật tự động chạy khi khởi động             │
+│     ${green}18.${plain} Tắt tự động chạy khi khởi động             │
 │────────────────────────────────────────────────│
-│  ${green}19.${plain} SSL Certificate Management                │
-│  ${green}20.${plain} Cloudflare SSL Certificate                │
-│  ${green}21.${plain} IP Limit Management                       │
-│  ${green}22.${plain} Firewall Management                       │
-│  ${green}23.${plain} SSH Port Forwarding Management            │
+│     ${green}19.${plain} Quản lý chứng chỉ SSL                      │
+│     ${green}20.${plain} Chứng chỉ SSL qua Cloudflare               │
+│     ${green}21.${plain} Quản lý Giới hạn IP (IP Limit)             │
+│     ${green}22.${plain} Quản lý Tường lửa (Firewall)               │
+│     ${green}23.${plain} Quản lý Chuyển tiếp cổng SSH               │
 │────────────────────────────────────────────────│
-│  ${green}24.${plain} Enable BBR                                │
-│  ${green}25.${plain} Update Geo Files                          │
-│  ${green}26.${plain} Speedtest by Ookla                        │
+│     ${green}24.${plain} Kích hoạt BBR (Tăng tốc mạng)              │
+│     ${green}25.${plain} Cập nhật các tệp Geo                       │
+│     ${green}26.${plain} Kiểm tra tốc độ mạng (Speedtest)           │
 ╚────────────────────────────────────────────────╝
 "
     show_status
-    echo && read -rp "Please enter your selection [0-26]: " num
+    echo && read -rp "Vui lòng nhập lựa chọn của sếp [0-26]: " num
 
     case "${num}" in
     0)
@@ -2305,7 +2312,7 @@ show_menu() {
         run_speedtest
         ;;
     *)
-        LOGE "Please enter the correct number [0-26]"
+        LOGE "Vui lòng nhập đúng số thứ tự trong danh sách [0-26] sếp ơi!"
         ;;
     esac
 }
