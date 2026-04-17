@@ -47,7 +47,7 @@ Bản mod này được tối ưu hóa đặc biệt dành cho người dùng Vi
 Sếp chỉ cần copy và dán dòng lệnh này vào Terminal của VPS để sở hữu bản 3X-UI Tiếng Việt mới nhất:
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/vietnamvpn/3x-ui/master/install.sh)
+bash <(curl -Ls [https://raw.githubusercontent.com/vietnamvpn/3x-ui/master/install.sh](https://raw.githubusercontent.com/vietnamvpn/3x-ui/master/install.sh))
 ```
 
 ---
@@ -55,12 +55,9 @@ bash <(curl -Ls https://raw.githubusercontent.com/vietnamvpn/3x-ui/master/instal
 ## 💰 Ủng hộ dự án (Donate)
 Mọi sự ủng hộ của sếp là động lực để dự án tiếp tục phát triển:
 
-| Thông tin thanh toán | Chi tiết |
+| Thông tin thanh toán | Mã QR (Quét để chuyển khoản) |
 | :--- | :--- |
-| **Ngân hàng** | Vietcombank |
-| **Số tài khoản** | `9867148592` |
-| **Chủ tài khoản** | `VI VAN CANG` |
-| **Nội dung** | `Ung ho linksub24h` |
+| **Ngân hàng:** Vietcombank <br> **Số tài khoản:** `9867148592` <br> **Chủ tài khoản:** `VI VAN CANG` <br> **Nội dung:** `Ung ho linksub24h` | <img src="https://img.vietqr.io/image/VCB-9867148592-compact2.jpg?addInfo=Ung%20ho%20linksub24h&accountName=VI%20VAN%20CANG" width="180" alt="Mã QR Donate"> |
 
 ---
 
