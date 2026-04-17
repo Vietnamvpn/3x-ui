@@ -67,7 +67,7 @@ Mọi sự ủng hộ của sếp là động lực để dự án tiếp tục 
 ---
 
 ## 📢 Kết nối với chúng tôi
-🚩 **Fanpage:** [VietnamVPN - vpn2s](https://facebook.com/vpn2s)
+🚩 **Fanpage:** [Linksub24h](https://facebook.com/vpn2s)
 
 🌐 **Website:** [Linksub24h.com](https://linksub24h.com)
 
