@@ -927,6 +927,15 @@ install_x-ui() {
       chmod 644 ${xui_service}/x-ui.service >/dev/null 2>&1
       systemctl daemon-reload
       systemctl enable x-ui
+      
+      # --- BẮT ĐẦU TẠO LOG XRAY TỰ ĐỘNG ---
+      echo -e "${green}Đang khoi tao thu muc log cho Xray...${plain}"
+      mkdir -p /var/log/xray/
+      touch /var/log/xray/access.log
+      touch /var/log/xray/error.log
+      chmod -R 777 /var/log/xray/
+      # --- KET THUC TAO LOG ---
+
       systemctl start x-ui
     else
       echo -e "${red}Cài đặt file x-ui.service thất bại${plain}"
