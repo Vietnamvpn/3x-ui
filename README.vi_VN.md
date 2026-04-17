@@ -9,7 +9,7 @@
   </picture>
 </p>
 
-<h1 align="center">🇻🇳 VietnamVPN 3X-UI</h1>
+<h1 align="center">LINKSUB24H 3X-UI</h1>
 <p align="center"><i>Phiên bản Linksub24h Edition - Tối ưu hóa cho người dùng Việt Nam</i></p>
 
 <p align="center">
@@ -59,7 +59,7 @@ Mọi sự ủng hộ của sếp là động lực để dự án tiếp tục 
 
 | Thông tin thanh toán | Chi tiết |
 | :--- | :--- |
-| **Ngân hàng** | MB Bank (Ngân hàng Quân Đội) |
+| **Ngân hàng** | Vietcombank |
 | **Số tài khoản** | `9867148592` |
 | **Chủ tài khoản** | `VI VAN CANG` |
 | **Nội dung** | `Ung ho linksub24h` |
@@ -77,4 +77,4 @@ Mọi sự ủng hộ của sếp là động lực để dự án tiếp tục 
 
 ### 🙏 Credits & License
 - Dự án được phát triển dựa trên nền tảng của [MHSanaei/3x-ui](https://github.com/MHSanaei/3x-ui).
-- Tối ưu bởi **VietnamVPN** với ❤️ dành cho anh em.
+- Tối ưu bởi **LINKSUB24H** với ❤️ dành cho anh em.
