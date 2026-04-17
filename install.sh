@@ -936,6 +936,15 @@ install_x-ui() {
       chmod -R 777 /var/log/xray/
       # --- KET THUC TAO LOG ---
 
+      # --- 2. TẠO CHỨNG CHỈ SSL TỰ KÝ DỰ PHÒNG ---
+      echo -e "${green}Đang kiem tra va tao chung chi SSL mac dinh...${plain}"
+      mkdir -p /root/cert/
+      if [ ! -f "/root/cert/3x.crt" ] || [ ! -f "/root/cert/3x.key" ]; then
+          openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout /root/cert/3x.key -out /root/cert/3x.crt -subj "/C=VN/ST=VN/O=VietnamVPN/CN=VietnamVPN" >/dev/null 2>&1
+          chmod 644 /root/cert/3x.crt
+          chmod 644 /root/cert/3x.key
+      fi
+
       systemctl start x-ui
     else
       echo -e "${red}Cài đặt file x-ui.service thất bại${plain}"
