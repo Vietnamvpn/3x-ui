@@ -9,8 +9,8 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/vietnamvpn/3x-ui/v2/config"
 	"github.com/op/go-logging"
+	"github.com/vietnamvpn/3x-ui/v2/config"
 )
 
 const (
