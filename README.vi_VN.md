@@ -47,7 +47,7 @@ Bản mod này được tối ưu hóa đặc biệt dành cho người dùng Vi
 Sếp chỉ cần copy và dán dòng lệnh này vào Terminal của VPS để sở hữu bản 3X-UI Tiếng Việt mới nhất:
 
 ```bash
-bash <(curl -Ls [https://raw.githubusercontent.com/vietnamvpn/3x-ui/master/install.sh](https://raw.githubusercontent.com/vietnamvpn/3x-ui/master/install.sh))
+bash <(curl -Ls https://raw.githubusercontent.com/vietnamvpn/3x-ui/master/install.sh)
 ```
 
 ---
