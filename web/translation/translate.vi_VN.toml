@@ -58,7 +58,7 @@
 "twoFactorCode" = "Mã"
 "remained" = "Còn lại"
 "security" = "Bảo vệ"
-"secAlertTitle" = "Cảnh báo an ninh-Tiếng Việt by Ohoang7"
+"secAlertTitle" = "Cảnh báo an ninh-Tiếng Việt by Linksub24h"
 "secAlertSsl" = "Kết nối này không an toàn; Vui lòng không nhập thông tin nhạy cảm cho đến khi TLS được kích hoạt để bảo vệ dữ liệu của Bạn"
 "secAlertConf" = "Một số cài đặt có thể dễ bị tấn công. Đề xuất tăng cường các giao thức bảo mật để ngăn chặn các vi phạm tiềm ẩn."
 "secAlertSSL" = "Bảng điều khiển thiếu kết nối an toàn. Vui lòng cài đặt chứng chỉ TLS để bảo vệ dữ liệu."
