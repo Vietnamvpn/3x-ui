@@ -1,6 +1,4 @@
-# VietnamVPN 3X-UI - Linksub24h Edition
-
-[Tiếng Việt](/README.vi_VN.md) | [English](/README.en_US.md) | [中文](/README.zh_CN.md) | [Español](/README.es_ES.md) | [Русский](/README.ru_RU.md)
+# 3X-UI VIỆT HÓA- LINKSUB24H Edition
 
 <p align="center">
   <picture>
@@ -9,7 +7,7 @@
   </picture>
 </p>
 
-<h1 align="center">LINKSUB24H 3X-UI</h1>
+<h1 align="center">LINKSUB24H - 3X-UI</h1>
 <p align="center"><i>Phiên bản Linksub24h Edition - Tối ưu hóa cho người dùng Việt Nam</i></p>
 
 <p align="center">
@@ -35,7 +33,7 @@ Nếu sếp không muốn tự cài đặt hoặc muốn sử dụng hệ thốn
 
 ---
 
-## ✨ Điểm nổi bật của bản Mod VietnamVPN
+## ✨ Điểm nổi bật của bản Mod Linksub24h
 Bản mod này được tối ưu hóa đặc biệt dành cho người dùng Việt Nam:
 
 - **Việt hóa 100%:** Giao diện trực quan, dễ sử dụng, không còn rào cản ngôn ngữ.
